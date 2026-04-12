@@ -1,49 +1,49 @@
-# Milvus Configuration via vector_db_storage_cls_kwargs
+# vector_db_storage_cls_kwargs による Milvus 設定
 
-## Overview
+## 概要
 
-Milvus index parameters can be configured through `vector_db_storage_cls_kwargs`, which is the **recommended approach** for framework integration scenarios (e.g., when using RAGAnything or other frameworks built on top of LightRAG).
+Milvus のインデックスパラメータは `vector_db_storage_cls_kwargs` を通じて設定できます。これはフレームワーク統合シナリオ（例：RAGAnything や LightRAG 上に構築された他のフレームワークを使用する場合）における**推奨アプローチ**です。
 
-## Why Use vector_db_storage_cls_kwargs?
+## なぜ vector_db_storage_cls_kwargs を使用するのか？
 
-✅ **Framework Integration**: Allows configuration to be passed through framework layers without environment variable changes
-✅ **Programmatic Configuration**: Set parameters in code rather than relying on environment variables
-✅ **Dynamic Configuration**: Different configurations for different RAG instances
-✅ **Clean API**: All parameters passed in one place during initialization
+✅ **フレームワーク統合**: 環境変数の変更なしに、フレームワーク層を通じて設定を渡すことが可能
+✅ **プログラムによる設定**: 環境変数に依存せず、コード内でパラメータを設定
+✅ **動的な設定**: 異なる RAG インスタンスに対して異なる設定が可能
+✅ **クリーンな API**: 初期化時にすべてのパラメータを一箇所で渡せる
 
-## Supported Parameters
+## サポートされるパラメータ
 
-All 11 MilvusIndexConfig parameters can be configured via `vector_db_storage_cls_kwargs`:
+MilvusIndexConfig の全 11 パラメータが `vector_db_storage_cls_kwargs` で設定可能です：
 
-### Base Configuration
-- `index_type`: Index type (AUTOINDEX, HNSW, HNSW_SQ, IVF_FLAT, etc.)
-- `metric_type`: Distance metric (COSINE, L2, IP)
+### 基本設定
+- `index_type`: インデックスタイプ（AUTOINDEX, HNSW, HNSW_SQ, IVF_FLAT 等）
+- `metric_type`: 距離メトリック（COSINE, L2, IP）
 
-### HNSW Parameters
-- `hnsw_m`: Number of connections per layer (2-2048, default: 16)
-- `hnsw_ef_construction`: Size of dynamic candidate list during construction (default: 360)
-- `hnsw_ef`: Size of dynamic candidate list during search (default: 200)
+### HNSW パラメータ
+- `hnsw_m`: レイヤーごとの接続数（2-2048、デフォルト: 16）
+- `hnsw_ef_construction`: 構築時の動的候補リストサイズ（デフォルト: 360）
+- `hnsw_ef`: 検索時の動的候補リストサイズ（デフォルト: 200）
 
-### HNSW_SQ Parameters (requires Milvus 2.6.8+)
-- `sq_type`: Quantization type (SQ4U, SQ6, SQ8, BF16, FP16, default: SQ8)
-- `sq_refine`: Enable refinement (default: False)
-- `sq_refine_type`: Refinement type (SQ6, SQ8, BF16, FP16, FP32, default: FP32)
-- `sq_refine_k`: Number of candidates to refine (default: 10)
+### HNSW_SQ パラメータ（Milvus 2.6.8 以降が必要）
+- `sq_type`: 量子化タイプ（SQ4U, SQ6, SQ8, BF16, FP16、デフォルト: SQ8）
+- `sq_refine`: リファインメントの有効化（デフォルト: False）
+- `sq_refine_type`: リファインメントタイプ（SQ6, SQ8, BF16, FP16, FP32、デフォルト: FP32）
+- `sq_refine_k`: リファインする候補数（デフォルト: 10）
 
-### IVF Parameters
-- `ivf_nlist`: Number of cluster units (1-65536, default: 1024)
-- `ivf_nprobe`: Number of units to query (default: 16)
+### IVF パラメータ
+- `ivf_nlist`: クラスタユニット数（1-65536、デフォルト: 1024）
+- `ivf_nprobe`: クエリ対象ユニット数（デフォルト: 16）
 
-## Configuration Priority
+## 設定の優先順位
 
-Configuration is resolved in the following order:
-1. **Parameters passed via vector_db_storage_cls_kwargs** (highest priority)
-2. Environment variables (MILVUS_INDEX_TYPE, etc.)
-3. Default values
+設定は以下の順序で解決されます：
+1. **vector_db_storage_cls_kwargs で渡されたパラメータ**（最優先）
+2. 環境変数（MILVUS_INDEX_TYPE 等）
+3. デフォルト値
 
-## Usage Examples
+## 使用例
 
-### Basic Configuration
+### 基本的な設定
 
 ```python
 from lightrag import LightRAG
@@ -62,7 +62,7 @@ rag = LightRAG(
 )
 ```
 
-### RAGAnything Framework Integration
+### RAGAnything フレームワーク統合
 
 ```python
 # In RAGAnything framework code:
@@ -87,7 +87,7 @@ def create_lightrag_instance(user_config):
     return rag
 ```
 
-### Advanced Configuration with HNSW_SQ
+### HNSW_SQ を使用した高度な設定
 
 ```python
 rag = LightRAG(
@@ -108,7 +108,7 @@ rag = LightRAG(
 )
 ```
 
-### IVF Configuration
+### IVF 設定
 
 ```python
 rag = LightRAG(
@@ -124,11 +124,11 @@ rag = LightRAG(
 )
 ```
 
-## Implementation Details
+## 実装の詳細
 
-### How It Works
+### 動作の仕組み
 
-1. When `MilvusVectorDBStorage.__post_init__()` is called:
+1. `MilvusVectorDBStorage.__post_init__()` が呼び出されると：
    ```python
    kwargs = self.global_config.get("vector_db_storage_cls_kwargs", {})
    index_config_keys = MilvusIndexConfig.get_config_field_names()
@@ -138,21 +138,21 @@ rag = LightRAG(
    self.index_config = MilvusIndexConfig(**index_config_params)
    ```
 
-2. `MilvusIndexConfig.get_config_field_names()` dynamically extracts all valid parameter names from the dataclass
-3. Only valid Milvus index parameters are extracted from kwargs
-4. Parameters are passed to `MilvusIndexConfig` which applies defaults and validates them
-5. Environment variables are used as fallback for any parameters not provided in kwargs
+2. `MilvusIndexConfig.get_config_field_names()` がデータクラスから有効なパラメータ名を動的に抽出
+3. kwargs から有効な Milvus インデックスパラメータのみが抽出される
+4. パラメータは `MilvusIndexConfig` に渡され、デフォルト値の適用とバリデーションが行われる
+5. kwargs で提供されなかったパラメータには環境変数がフォールバックとして使用される
 
-### Automatic Synchronization
+### 自動同期
 
-The implementation uses `MilvusIndexConfig.get_config_field_names()` to dynamically extract valid parameters. This means:
-- ✅ New parameters added to `MilvusIndexConfig` are **automatically recognized**
-- ✅ No need to maintain duplicate parameter lists
-- ✅ Single source of truth for configuration parameters
+この実装は `MilvusIndexConfig.get_config_field_names()` を使用して有効なパラメータを動的に抽出します。これにより：
+- ✅ `MilvusIndexConfig` に追加された新しいパラメータは**自動的に認識される**
+- ✅ 重複するパラメータリストの管理が不要
+- ✅ 設定パラメータの単一の信頼できる情報源を維持
 
-## Testing
+## テスト
 
-The configuration via `vector_db_storage_cls_kwargs` is thoroughly tested:
+`vector_db_storage_cls_kwargs` を通じた設定は十分にテストされています：
 
 ```bash
 # Run all kwargs bridge tests
@@ -165,33 +165,33 @@ python -m pytest tests/test_milvus_kwargs_bridge.py::TestMilvusKwargsParameterBr
 python -m pytest tests/test_milvus_kwargs_bridge.py::TestMilvusKwargsParameterBridge::test_all_milvus_parameters_supported_via_kwargs -v
 ```
 
-## Examples
+## サンプル
 
-See `examples/milvus_kwargs_configuration_demo.py` for a complete working example.
+完全な動作サンプルは `examples/milvus_kwargs_configuration_demo.py` を参照してください。
 
-## Backward Compatibility
+## 後方互換性
 
-✅ **100% backward compatible** with existing code
-✅ Environment variable configuration still works
-✅ All existing tests pass
+✅ 既存のコードとの**100% 後方互換性**を維持
+✅ 環境変数による設定は引き続き動作
+✅ 既存のテストはすべてパス
 
-## FAQ
+## よくある質問
 
-### Q: Can I mix kwargs and environment variables?
-**A:** Yes! Parameters in `vector_db_storage_cls_kwargs` take priority over environment variables.
+### Q: kwargs と環境変数を混在させることはできますか？
+**A:** はい。`vector_db_storage_cls_kwargs` のパラメータが環境変数より優先されます。
 
-### Q: What happens to non-Milvus parameters in kwargs?
-**A:** They are ignored. Only valid MilvusIndexConfig parameters are extracted. This allows frameworks to pass their own parameters alongside Milvus configuration.
+### Q: kwargs 内の Milvus 以外のパラメータはどうなりますか？
+**A:** 無視されます。有効な MilvusIndexConfig パラメータのみが抽出されます。これにより、フレームワークは Milvus 設定と並行して独自のパラメータを渡すことができます。
 
-### Q: Do I need to set environment variables?
-**A:** No! When using `vector_db_storage_cls_kwargs`, environment variables are optional. They serve as fallback values.
+### Q: 環境変数を設定する必要がありますか？
+**A:** いいえ。`vector_db_storage_cls_kwargs` を使用する場合、環境変数はオプションです。フォールバック値として機能します。
 
-### Q: Is this approach recommended for RAGAnything?
-**A:** Yes! This is the **recommended approach** for any framework that builds on top of LightRAG, as it allows clean configuration passing through framework layers.
+### Q: このアプローチは RAGAnything に推奨されますか？
+**A:** はい。これは LightRAG 上に構築されるすべてのフレームワークにおける**推奨アプローチ**です。フレームワーク層を通じたクリーンな設定の受け渡しが可能になります。
 
-## References
+## リファレンス
 
-- Test Suite: `tests/test_milvus_kwargs_bridge.py`
-- Implementation: `lightrag/kg/milvus_impl.py` (lines 1237-1272)
-- Example: `examples/milvus_kwargs_configuration_demo.py`
-- MilvusIndexConfig: `lightrag/kg/milvus_impl.py` (lines 75-303)
+- テストスイート: `tests/test_milvus_kwargs_bridge.py`
+- 実装: `lightrag/kg/milvus_impl.py`（1237-1272行目）
+- サンプル: `examples/milvus_kwargs_configuration_demo.py`
+- MilvusIndexConfig: `lightrag/kg/milvus_impl.py`（75-303行目）

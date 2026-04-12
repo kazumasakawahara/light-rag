@@ -1,37 +1,37 @@
-# LightRAG Offline Deployment Guide
+# LightRAG オフラインデプロイガイド
 
-This guide provides comprehensive instructions for deploying LightRAG in offline environments where internet access is limited or unavailable.
+このガイドでは、インターネットアクセスが制限されている、または利用できないオフライン環境で LightRAG をデプロイするための包括的な手順を説明します。
 
-If you deploy LightRAG using Docker, there is no need to refer to this document, as the LightRAG Docker image is pre-configured for offline operation.
+Docker を使用して LightRAG をデプロイする場合は、LightRAG Docker イメージはオフライン運用向けに事前設定されているため、このドキュメントを参照する必要はありません。
 
-> Software packages requiring `transformers`, `torch`, or `cuda` will not be included in the offline dependency group. Consequently, document extraction tools such as Docling, as well as local LLM models like Hugging Face and LMDeploy, are outside the scope of offline installation support. These high-compute-resource-demanding services should not be integrated into LightRAG. Docling will be decoupled and deployed as a standalone service.
+> `transformers`、`torch`、または `cuda` を必要とするソフトウェアパッケージは、オフライン依存関係グループに含まれません。そのため、Docling などのドキュメント抽出ツールや、Hugging Face や LMDeploy などのローカル LLM モデルは、オフラインインストールサポートの対象外です。これらの高い計算リソースを要求するサービスは、LightRAG に統合すべきではありません。Docling は分離され、スタンドアロンサービスとしてデプロイされる予定です。
 
-## Table of Contents
+## 目次
 
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Layered Dependencies](#layered-dependencies)
-- [Tiktoken Cache Management](#tiktoken-cache-management)
-- [Complete Offline Deployment Workflow](#complete-offline-deployment-workflow)
-- [Troubleshooting](#troubleshooting)
+- [概要](#概要)
+- [クイックスタート](#クイックスタート)
+- [階層化された依存関係](#階層化された依存関係)
+- [Tiktoken キャッシュ管理](#tiktoken-キャッシュ管理)
+- [完全なオフラインデプロイワークフロー](#完全なオフラインデプロイワークフロー)
+- [トラブルシューティング](#トラブルシューティング)
 
-## Overview
+## 概要
 
-LightRAG uses dynamic package installation (`pipmaster`) for optional features based on file types and configurations. In offline environments, these dynamic installations will fail. This guide shows you how to pre-install all necessary dependencies and cache files.
+LightRAG はファイルタイプや設定に基づいてオプション機能の動的パッケージインストール（`pipmaster`）を使用します。オフライン環境では、これらの動的インストールは失敗します。このガイドでは、必要なすべての依存関係とキャッシュファイルを事前にインストールする方法を説明します。
 
-### What Gets Dynamically Installed?
+### 動的にインストールされるもの
 
-LightRAG dynamically installs packages for:
+LightRAG は以下のパッケージを動的にインストールします：
 
-- **Storage Backends**: `redis`, `neo4j`, `pymilvus`, `pymongo`, `asyncpg`, `qdrant-client`
-- **LLM Providers**: `openai`, `anthropic`, `ollama`, `zhipuai`, `aioboto3`, `voyageai`, `llama-index`, `lmdeploy`, `transformers`, `torch`
-- **Tiktoken Models**: BPE encoding models downloaded from OpenAI CDN
+- **ストレージバックエンド**: `redis`, `neo4j`, `pymilvus`, `pymongo`, `asyncpg`, `qdrant-client`
+- **LLM プロバイダー**: `openai`, `anthropic`, `ollama`, `zhipuai`, `aioboto3`, `voyageai`, `llama-index`, `lmdeploy`, `transformers`, `torch`
+- **Tiktoken モデル**: OpenAI CDN からダウンロードされる BPE エンコーディングモデル
 
-**Note**: Document processing dependencies (`pypdf`, `python-docx`, `python-pptx`, `openpyxl`) are now pre-installed with the `api` extras group and no longer require dynamic installation.
+**注意**: ドキュメント処理の依存関係（`pypdf`, `python-docx`, `python-pptx`, `openpyxl`）は `api` extras グループにプリインストールされるようになり、動的インストールは不要になりました。
 
-## Quick Start
+## クイックスタート
 
-### Option 1: Using pip with Offline Extras
+### オプション 1: pip でオフライン extras を使用
 
 ```bash
 # Online environment: Install all offline dependencies
@@ -53,7 +53,7 @@ pip install --no-index --find-links=./offline-packages lightrag-hku[offline]
 export TIKTOKEN_CACHE_DIR=~/.tiktoken_cache
 ```
 
-### Option 2: Using Requirements Files
+### オプション 2: requirements ファイルを使用
 
 ```bash
 # Online environment: Download packages
@@ -68,24 +68,24 @@ tar -xzf packages.tar.gz
 pip install --no-index --find-links=./packages -r requirements-offline.txt
 ```
 
-## Layered Dependencies
+## 階層化された依存関係
 
-LightRAG provides flexible dependency groups for different use cases:
+LightRAG はさまざまなユースケースに対応する柔軟な依存関係グループを提供します：
 
-### Available Dependency Groups
+### 利用可能な依存関係グループ
 
-| Group | Description | Use Case |
+| グループ | 説明 | ユースケース |
 | ----- | ----------- | -------- |
-| `api` | API server + document processing | FastAPI server with PDF, DOCX, PPTX, XLSX support |
-| `offline-storage` | Storage backends | Redis, Neo4j, MongoDB, PostgreSQL, etc. |
-| `offline-llm` | LLM providers | OpenAI, Anthropic, Ollama, etc. |
-| `offline` | Complete offline package | API + Storage + LLM (all features) |
+| `api` | API サーバー + ドキュメント処理 | PDF, DOCX, PPTX, XLSX サポート付き FastAPI サーバー |
+| `offline-storage` | ストレージバックエンド | Redis, Neo4j, MongoDB, PostgreSQL 等 |
+| `offline-llm` | LLM プロバイダー | OpenAI, Anthropic, Ollama 等 |
+| `offline` | 完全なオフラインパッケージ | API + Storage + LLM（全機能） |
 
-**Note**: Document processing (PDF, DOCX, PPTX, XLSX) is included in the `api` extras group. The previous `offline-docs` group has been merged into `api` for better integration.
+**注意**: ドキュメント処理（PDF, DOCX, PPTX, XLSX）は `api` extras グループに含まれています。以前の `offline-docs` グループは、より良い統合のために `api` に統合されました。
 
-> Software packages requiring `transformers`, `torch`, or `cuda` will not be included in the offline dependency group.
+> `transformers`、`torch`、または `cuda` を必要とするソフトウェアパッケージは、オフライン依存関係グループに含まれません。
 
-### Installation Examples
+### インストール例
 
 ```bash
 # Install API with document processing
@@ -98,7 +98,7 @@ pip install lightrag-hku[api,offline-storage]
 pip install lightrag-hku[offline]
 ```
 
-### Using Individual Requirements Files
+### 個別の requirements ファイルを使用
 
 ```bash
 # Storage backends only
@@ -111,13 +111,13 @@ pip install -r requirements-offline-llm.txt
 pip install -r requirements-offline.txt
 ```
 
-## Tiktoken Cache Management
+## Tiktoken キャッシュ管理
 
-Tiktoken downloads BPE encoding models on first use. In offline environments, you must pre-download these models.
+Tiktoken は初回使用時に BPE エンコーディングモデルをダウンロードします。オフライン環境では、これらのモデルを事前にダウンロードしておく必要があります。
 
-### Using the CLI Command
+### CLI コマンドの使用
 
-After installing LightRAG, use the built-in command:
+LightRAG をインストール後、組み込みコマンドを使用します：
 
 ```bash
 # Download to default location (see output for exact path)
@@ -130,9 +130,9 @@ lightrag-download-cache --cache-dir ./tiktoken_cache
 lightrag-download-cache --models gpt-4o-mini gpt-4
 ```
 
-### Default Models Downloaded
+### ダウンロードされるデフォルトモデル
 
-- `gpt-4o-mini` (LightRAG default)
+- `gpt-4o-mini`（LightRAG デフォルト）
 - `gpt-4o`
 - `gpt-4`
 - `gpt-3.5-turbo`
@@ -140,7 +140,7 @@ lightrag-download-cache --models gpt-4o-mini gpt-4
 - `text-embedding-3-small`
 - `text-embedding-3-large`
 
-### Setting Cache Location in Offline Environment
+### オフライン環境でのキャッシュ場所の設定
 
 ```bash
 # Option 1: Environment variable (temporary)
@@ -154,9 +154,9 @@ source ~/.bashrc
 cp -r /path/to/tiktoken_cache ~/.tiktoken_cache/
 ```
 
-## Complete Offline Deployment Workflow
+## 完全なオフラインデプロイワークフロー
 
-### Step 1: Prepare in Online Environment
+### ステップ 1: オンライン環境での準備
 
 ```bash
 # 1. Install LightRAG with offline dependencies
@@ -175,7 +175,7 @@ tar -czf lightrag-offline-complete.tar.gz ./offline_cache
 tar -tzf lightrag-offline-complete.tar.gz | head -20
 ```
 
-### Step 2: Transfer to Offline Environment
+### ステップ 2: オフライン環境への転送
 
 ```bash
 # Using scp
@@ -185,7 +185,7 @@ scp lightrag-offline-complete.tar.gz user@offline-server:/tmp/
 # Copy lightrag-offline-complete.tar.gz to USB drive
 ```
 
-### Step 3: Install in Offline Environment
+### ステップ 3: オフライン環境でのインストール
 
 ```bash
 # 1. Extract archive
@@ -206,7 +206,7 @@ export TIKTOKEN_CACHE_DIR=~/.tiktoken_cache
 echo 'export TIKTOKEN_CACHE_DIR=~/.tiktoken_cache' >> ~/.bashrc
 ```
 
-### Step 4: Verify Installation
+### ステップ 4: インストールの確認
 
 ```bash
 # Test Python import
@@ -220,13 +220,13 @@ python -c "import docling; print('✓ Docling available')"
 python -c "import redis; print('✓ Redis available')"
 ```
 
-## Troubleshooting
+## トラブルシューティング
 
-### Issue: Tiktoken fails with network error
+### 問題: Tiktoken がネットワークエラーで失敗する
 
-**Problem**: `Unable to load tokenizer for model gpt-4o-mini`
+**現象**: `Unable to load tokenizer for model gpt-4o-mini`
 
-**Solution**:
+**解決策**:
 ```bash
 # Ensure TIKTOKEN_CACHE_DIR is set
 echo $TIKTOKEN_CACHE_DIR
@@ -237,11 +237,11 @@ ls -la ~/.tiktoken_cache/
 # If empty, you need to download cache in online environment first
 ```
 
-### Issue: Dynamic package installation fails
+### 問題: 動的パッケージインストールが失敗する
 
-**Problem**: `Error installing package xxx`
+**現象**: `Error installing package xxx`
 
-**Solution**:
+**解決策**:
 ```bash
 # Pre-install the specific package you need
 # For API with document processing:
@@ -254,11 +254,11 @@ pip install lightrag-hku[offline-storage]
 pip install lightrag-hku[offline-llm]
 ```
 
-### Issue: Missing dependencies at runtime
+### 問題: 実行時に依存関係が見つからない
 
-**Problem**: `ModuleNotFoundError: No module named 'xxx'`
+**現象**: `ModuleNotFoundError: No module named 'xxx'`
 
-**Solution**:
+**解決策**:
 ```bash
 # Check what you have installed
 pip list | grep -i xxx
@@ -267,11 +267,11 @@ pip list | grep -i xxx
 pip install lightrag-hku[offline]  # Install all offline deps
 ```
 
-### Issue: Permission denied on tiktoken cache
+### 問題: Tiktoken キャッシュへのアクセス権限が拒否される
 
-**Problem**: `PermissionError: [Errno 13] Permission denied`
+**現象**: `PermissionError: [Errno 13] Permission denied`
 
-**Solution**:
+**解決策**:
 ```bash
 # Ensure cache directory has correct permissions
 chmod 755 ~/.tiktoken_cache
@@ -282,36 +282,36 @@ export TIKTOKEN_CACHE_DIR=~/my_tiktoken_cache
 mkdir -p ~/my_tiktoken_cache
 ```
 
-## Best Practices
+## ベストプラクティス
 
-1. **Test in Online Environment First**: Always test your complete setup in an online environment before going offline.
+1. **まずオンライン環境でテスト**: オフラインにする前に、必ずオンライン環境で完全なセットアップをテストしてください。
 
-2. **Keep Cache Updated**: Periodically update your offline cache when new models are released.
+2. **キャッシュを最新に保つ**: 新しいモデルがリリースされたら、オフラインキャッシュを定期的に更新してください。
 
-3. **Document Your Setup**: Keep notes on which optional dependencies you actually need.
+3. **セットアップを文書化する**: 実際に必要なオプション依存関係についてメモを残してください。
 
-4. **Version Pinning**: Consider pinning specific versions in production:
+4. **バージョンの固定**: 本番環境では特定のバージョンを固定することを検討してください：
    ```bash
    pip freeze > requirements-production.txt
    ```
 
-5. **Minimal Installation**: Only install what you need:
+5. **最小限のインストール**: 必要なものだけをインストールしてください：
    ```bash
    # If you only need API with document processing
    pip install lightrag-hku[api]
    # Then manually add specific LLM: pip install openai
    ```
 
-## Additional Resources
+## その他のリソース
 
-- [LightRAG GitHub Repository](https://github.com/HKUDS/LightRAG)
-- [Docker Deployment Guide](./DockerDeployment.md)
-- [API Server Documentation](./LightRAG-API-Server.md)
+- [LightRAG GitHub リポジトリ](https://github.com/HKUDS/LightRAG)
+- [Docker デプロイガイド](./DockerDeployment.md)
+- [API サーバードキュメント](./LightRAG-API-Server.md)
 
-## Support
+## サポート
 
-If you encounter issues not covered in this guide:
+このガイドでカバーされていない問題が発生した場合：
 
-1. Check the [GitHub Issues](https://github.com/HKUDS/LightRAG/issues)
-2. Review the [project documentation](../README.md)
-3. Create a new issue with your offline deployment details
+1. [GitHub Issues](https://github.com/HKUDS/LightRAG/issues) を確認してください
+2. [プロジェクトドキュメント](../README.md) を参照してください
+3. オフラインデプロイの詳細を記載した新しい Issue を作成してください

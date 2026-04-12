@@ -1055,6 +1055,25 @@ def create_app(args):
         name=args.simulated_model_name, tag=args.simulated_model_tag
     )
 
+    # Select chunking function based on SUMMARY_LANGUAGE
+    chunking_func_kwargs = {}
+    if args.summary_language and args.summary_language.lower() in (
+        "japanese",
+        "ja",
+    ):
+        try:
+            from lightrag.japanese_chunking import japanese_chunking
+
+            chunking_func_kwargs["chunking_func"] = japanese_chunking
+            logger.info(
+                "Japanese-aware chunking enabled (SUMMARY_LANGUAGE=%s)",
+                args.summary_language,
+            )
+        except ImportError:
+            logger.warning(
+                "japanese_chunking module not found; falling back to default chunking"
+            )
+
     # Initialize RAG with unified configuration
     try:
         rag = LightRAG(
@@ -1090,6 +1109,7 @@ def create_app(args):
                 "entity_types": args.entity_types,
             },
             ollama_server_infos=ollama_server_infos,
+            **chunking_func_kwargs,
         )
     except Exception as e:
         logger.error(f"Failed to initialize LightRAG: {e}")

@@ -1,14 +1,14 @@
-# Evaluation Result Reproduce
+# 評価結果の再現
 
-## Dataset
+## データセット
 
-The dataset used in LightRAG can be downloaded from [TommyChien/UltraDomain](https://huggingface.co/datasets/TommyChien/UltraDomain).
+LightRAG で使用されるデータセットは [TommyChien/UltraDomain](https://huggingface.co/datasets/TommyChien/UltraDomain) からダウンロードできます。
 
-## Generate Query
+## クエリの生成
 
-LightRAG uses the following prompt to generate high-level queries, with the corresponding code in `examples/generate_query.py`.
+LightRAG は以下のプロンプトを使用して高レベルなクエリを生成します。対応するコードは `examples/generate_query.py` にあります。
 
-**Prompt**
+**プロンプト**
 
 ```
 Given the following description of a dataset:
@@ -34,11 +34,11 @@ Output the results in the following structure:
     ...
 ```
 
-## Batch Eval
+## バッチ評価
 
-To evaluate the performance of two RAG systems on high-level queries, LightRAG uses the following prompt, with the specific code available in `reproduce/batch_eval.py`.
+高レベルなクエリに対する2つの RAG システムのパフォーマンスを評価するために、LightRAG は以下のプロンプトを使用します。具体的なコードは `reproduce/batch_eval.py` で確認できます。
 
-**Prompt**
+**プロンプト**
 
 ```
 ---Role---
@@ -83,7 +83,7 @@ Output your evaluation in the following JSON format:
 }}
 ```
 
-## Overall Performance Table
+## 全体的なパフォーマンステーブル
 
 ||**Agriculture**||**CS**||**Legal**||**Mix**||
 |----------------------|---------------|------------|------|------------|---------|------------|-------|------------|
@@ -108,15 +108,15 @@ Output your evaluation in the following JSON format:
 |**Empowerment**|41.2%|**58.8%**|45.2%|**54.8%**|43.6%|**56.4%**|**50.8%**|49.2%|
 |**Overall**|45.2%|**54.8%**|48.0%|**52.0%**|47.2%|**52.8%**|**50.4%**|49.6%|
 
-## Reproduce
+## 再現手順
 
-All the code can be found in the `./reproduce` directory.
+すべてのコードは `./reproduce` ディレクトリにあります。
 
-### Step-0 Extract Unique Contexts
+### Step-0 ユニークコンテキストの抽出
 
-First, extract unique contexts from the datasets.
+まず、データセットからユニークなコンテキストを抽出します。
 
-**Code**
+**コード**
 
 ```python
 def extract_unique_contexts(input_directory, output_directory):
@@ -169,11 +169,11 @@ def extract_unique_contexts(input_directory, output_directory):
     print("All files have been processed.")
 ```
 
-### Step-1 Insert Contexts
+### Step-1 コンテキストの挿入
 
-Insert the extracted contexts into the LightRAG system.
+抽出したコンテキストを LightRAG システムに挿入します。
 
-**Code**
+**コード**
 
 ```python
 def insert_text(rag, file_path):
@@ -194,11 +194,11 @@ def insert_text(rag, file_path):
         print("Insertion failed after exceeding the maximum number of retries")
 ```
 
-### Step-2 Generate Queries
+### Step-2 クエリの生成
 
-Extract tokens from the first and second half of each context, then combine them as dataset descriptions to generate queries.
+各コンテキストの前半と後半からトークンを抽出し、それらを組み合わせてデータセットの説明としてクエリを生成します。
 
-**Code**
+**コード**
 
 ```python
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
@@ -216,11 +216,11 @@ def get_summary(context, tot_tokens=2000):
     return summary
 ```
 
-### Step-3 Query
+### Step-3 クエリの実行
 
-Extract and query LightRAG with the queries generated in Step-2.
+Step-2 で生成されたクエリを抽出し、LightRAG でクエリを実行します。
 
-**Code**
+**コード**
 
 ```python
 def extract_queries(file_path):

@@ -1,8 +1,8 @@
-# Programming With LightRAG Core
+# LightRAG Core を使ったプログラミング
 
-> If you want to integrate LightRAG into your project, we recommend using the REST API provided by the LightRAG Server. LightRAG Core is intended for embedded applications or researchers conducting studies and evaluations.
+> LightRAG をプロジェクトに統合する場合は、LightRAG Server が提供する REST API の使用を推奨します。LightRAG Core は、組み込みアプリケーションや研究・評価を行う研究者向けです。
 
-## A Simple Program
+## シンプルなプログラム
 
 ```python
 import os
@@ -52,53 +52,53 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-Notes:
-- Export your `OPENAI_API_KEY` environment variable before running.
-- All data is persisted to `WORKING_DIR`.
+注意事項:
+- 実行前に環境変数 `OPENAI_API_KEY` をエクスポートしてください。
+- すべてのデータは `WORKING_DIR` に永続化されます。
 
-**Important:**
+**重要:**
 
-**LightRAG requires explicit initialization before use.** You must call `await rag.initialize_storages()` after creating a LightRAG instance, otherwise you will encounter errors.
+**LightRAG は使用前に明示的な初期化が必要です。** LightRAG インスタンスを作成した後、`await rag.initialize_storages()` を呼び出す必要があります。呼び出さない場合、エラーが発生します。
 
 
-## LightRAG Init Parameters
+## LightRAG 初期化パラメータ
 
-**Parameters**
+**パラメータ**
 
-| **Parameter** | **Type** | **Explanation** | **Default** |
+| **パラメータ** | **型** | **説明** | **デフォルト** |
 | -------------- | ---------- | ----------------- | ------------- |
-| **working_dir** | `str` | Directory where the cache will be stored | `lightrag_cache+timestamp` |
-| **workspace** | str | Workspace name for data isolation between different LightRAG Instances | |
-| **kv_storage** | `str` | Storage type for documents and text chunks. Supported types: `JsonKVStorage`,`PGKVStorage`,`RedisKVStorage`,`MongoKVStorage`,`OpenSearchKVStorage` | `JsonKVStorage` |
-| **vector_storage** | `str` | Storage type for embedding vectors. Supported types: `NanoVectorDBStorage`,`PGVectorStorage`,`MilvusVectorDBStorage`,`ChromaVectorDBStorage`,`FaissVectorDBStorage`,`MongoVectorDBStorage`,`QdrantVectorDBStorage`,`OpenSearchVectorDBStorage` | `NanoVectorDBStorage` |
-| **graph_storage** | `str` | Storage type for graph edges and nodes. Supported types: `NetworkXStorage`,`Neo4JStorage`,`PGGraphStorage`,`AGEStorage`,`OpenSearchGraphStorage` | `NetworkXStorage` |
-| **doc_status_storage** | `str` | Storage type for documents process status. Supported types: `JsonDocStatusStorage`,`PGDocStatusStorage`,`MongoDocStatusStorage`,`OpenSearchDocStatusStorage` | `JsonDocStatusStorage` |
-| **chunk_token_size** | `int` | Maximum token size per chunk when splitting documents | `1200` |
-| **chunk_overlap_token_size** | `int` | Overlap token size between two chunks when splitting documents | `100` |
-| **tokenizer** | `Tokenizer` | The function used to convert text into tokens (numbers) and back using .encode() and .decode() functions following `TokenizerInterface` protocol. If you don't specify one, it will use the default Tiktoken tokenizer. | `TiktokenTokenizer` |
-| **tiktoken_model_name** | `str` | If you're using the default Tiktoken tokenizer, this is the name of the specific Tiktoken model to use. This setting is ignored if you provide your own tokenizer. | `gpt-4o-mini` |
-| **entity_extract_max_gleaning** | `int` | Number of loops in the entity extraction process, appending history messages | `1` |
-| **node_embedding_algorithm** | `str` | Algorithm for node embedding (currently not used) | `node2vec` |
-| **node2vec_params** | `dict` | Parameters for node embedding | `{"dimensions": 1536,"num_walks": 10,"walk_length": 40,"window_size": 2,"iterations": 3,"random_seed": 3,}` |
-| **embedding_func** | `EmbeddingFunc` | Function to generate embedding vectors from text | `openai_embed` |
-| **embedding_batch_num** | `int` | Maximum batch size for embedding processes (multiple texts sent per batch) | `32` |
-| **embedding_func_max_async** | `int` | Maximum number of concurrent asynchronous embedding processes | `16` |
-| **llm_model_func** | `callable` | Function for LLM generation | `gpt_4o_mini_complete` |
-| **llm_model_name** | `str` | LLM model name for generation | `meta-llama/Llama-3.2-1B-Instruct` |
-| **summary_context_size** | `int` | Maximum tokens send to LLM to generate summaries for entity relation merging | `10000`（configured by env var SUMMARY_CONTEXT_SIZE) |
-| **summary_max_tokens** | `int` | Maximum token size for entity/relation description | `500`（configured by env var SUMMARY_MAX_TOKENS) |
-| **llm_model_max_async** | `int` | Maximum number of concurrent asynchronous LLM processes | `4`（default value changed by env var MAX_ASYNC) |
-| **llm_model_kwargs** | `dict` | Additional parameters for LLM generation | |
-| **vector_db_storage_cls_kwargs** | `dict` | Additional parameters for vector database, like setting the threshold for nodes and relations retrieval | cosine_better_than_threshold: 0.2（default value changed by env var COSINE_THRESHOLD) |
-| **enable_llm_cache** | `bool` | If `TRUE`, stores LLM results in cache; repeated prompts return cached responses | `TRUE` |
-| **enable_llm_cache_for_entity_extract** | `bool` | If `TRUE`, stores LLM results in cache for entity extraction; Good for beginners to debug your application | `TRUE` |
-| **addon_params** | `dict` | Additional parameters, e.g., `{"language": "Simplified Chinese", "entity_types": ["organization", "person", "location", "event"]}`: sets example limit, entity/relation extraction output language | language: English` |
-| **embedding_cache_config** | `dict` | Configuration for question-answer caching. Contains three parameters: `enabled`: Boolean value to enable/disable cache lookup functionality. When enabled, the system will check cached responses before generating new answers. `similarity_threshold`: Float value (0-1), similarity threshold. When a new question's similarity with a cached question exceeds this threshold, the cached answer will be returned directly without calling the LLM. `use_llm_check`: Boolean value to enable/disable LLM similarity verification. When enabled, LLM will be used as a secondary check to verify the similarity between questions before returning cached answers. | Default: `{"enabled": False, "similarity_threshold": 0.95, "use_llm_check": False}` |
+| **working_dir** | `str` | キャッシュが保存されるディレクトリ | `lightrag_cache+timestamp` |
+| **workspace** | str | 異なる LightRAG インスタンス間のデータ分離のためのワークスペース名 | |
+| **kv_storage** | `str` | ドキュメントとテキストチャンクのストレージタイプ。サポートされるタイプ: `JsonKVStorage`,`PGKVStorage`,`RedisKVStorage`,`MongoKVStorage`,`OpenSearchKVStorage` | `JsonKVStorage` |
+| **vector_storage** | `str` | 埋め込みベクトルのストレージタイプ。サポートされるタイプ: `NanoVectorDBStorage`,`PGVectorStorage`,`MilvusVectorDBStorage`,`ChromaVectorDBStorage`,`FaissVectorDBStorage`,`MongoVectorDBStorage`,`QdrantVectorDBStorage`,`OpenSearchVectorDBStorage` | `NanoVectorDBStorage` |
+| **graph_storage** | `str` | グラフのエッジとノードのストレージタイプ。サポートされるタイプ: `NetworkXStorage`,`Neo4JStorage`,`PGGraphStorage`,`AGEStorage`,`OpenSearchGraphStorage` | `NetworkXStorage` |
+| **doc_status_storage** | `str` | ドキュメント処理ステータスのストレージタイプ。サポートされるタイプ: `JsonDocStatusStorage`,`PGDocStatusStorage`,`MongoDocStatusStorage`,`OpenSearchDocStatusStorage` | `JsonDocStatusStorage` |
+| **chunk_token_size** | `int` | ドキュメント分割時のチャンクあたりの最大トークンサイズ | `1200` |
+| **chunk_overlap_token_size** | `int` | ドキュメント分割時の2つのチャンク間のオーバーラップトークンサイズ | `100` |
+| **tokenizer** | `Tokenizer` | テキストをトークン（数値）に変換し、`.encode()` および `.decode()` 関数で元に戻す関数。`TokenizerInterface` プロトコルに従います。指定しない場合、デフォルトの Tiktoken トークナイザーが使用されます。 | `TiktokenTokenizer` |
+| **tiktoken_model_name** | `str` | デフォルトの Tiktoken トークナイザーを使用する場合、使用する特定の Tiktoken モデルの名前です。独自のトークナイザーを提供した場合、この設定は無視されます。 | `gpt-4o-mini` |
+| **entity_extract_max_gleaning** | `int` | エンティティ抽出プロセスにおけるループ回数。履歴メッセージを追加します | `1` |
+| **node_embedding_algorithm** | `str` | ノード埋め込みのアルゴリズム（現在未使用） | `node2vec` |
+| **node2vec_params** | `dict` | ノード埋め込みのパラメータ | `{"dimensions": 1536,"num_walks": 10,"walk_length": 40,"window_size": 2,"iterations": 3,"random_seed": 3,}` |
+| **embedding_func** | `EmbeddingFunc` | テキストから埋め込みベクトルを生成する関数 | `openai_embed` |
+| **embedding_batch_num** | `int` | 埋め込み処理の最大バッチサイズ（バッチごとに複数テキストを送信） | `32` |
+| **embedding_func_max_async** | `int` | 非同期埋め込み処理の最大同時実行数 | `16` |
+| **llm_model_func** | `callable` | LLM 生成用の関数 | `gpt_4o_mini_complete` |
+| **llm_model_name** | `str` | 生成用の LLM モデル名 | `meta-llama/Llama-3.2-1B-Instruct` |
+| **summary_context_size** | `int` | エンティティ・リレーションのマージ用サマリー生成時に LLM に送信する最大トークン数 | `10000`（環境変数 SUMMARY_CONTEXT_SIZE で設定可能） |
+| **summary_max_tokens** | `int` | エンティティ/リレーションの説明の最大トークンサイズ | `500`（環境変数 SUMMARY_MAX_TOKENS で設定可能） |
+| **llm_model_max_async** | `int` | 非同期 LLM 処理の最大同時実行数 | `4`（環境変数 MAX_ASYNC でデフォルト値を変更可能） |
+| **llm_model_kwargs** | `dict` | LLM 生成用の追加パラメータ | |
+| **vector_db_storage_cls_kwargs** | `dict` | ベクトルデータベース用の追加パラメータ。ノードとリレーション取得の閾値設定など | cosine_better_than_threshold: 0.2（環境変数 COSINE_THRESHOLD でデフォルト値を変更可能） |
+| **enable_llm_cache** | `bool` | `TRUE` の場合、LLM の結果をキャッシュに保存します。同じプロンプトにはキャッシュされたレスポンスを返します | `TRUE` |
+| **enable_llm_cache_for_entity_extract** | `bool` | `TRUE` の場合、エンティティ抽出の LLM 結果をキャッシュに保存します。アプリケーションのデバッグに役立ちます | `TRUE` |
+| **addon_params** | `dict` | 追加パラメータ。例: `{"language": "Simplified Chinese", "entity_types": ["organization", "person", "location", "event"]}`: サンプル制限やエンティティ/リレーション抽出の出力言語を設定します | language: English` |
+| **embedding_cache_config** | `dict` | 質問応答キャッシュの設定。3つのパラメータを含みます: `enabled`: キャッシュ検索機能の有効/無効を切り替えるブール値。有効にすると、新しい回答を生成する前にキャッシュされたレスポンスを確認します。`similarity_threshold`: 浮動小数点値（0-1）、類似度の閾値。新しい質問とキャッシュされた質問の類似度がこの閾値を超えると、LLM を呼び出さずにキャッシュされた回答を直接返します。`use_llm_check`: LLM による類似度検証の有効/無効を切り替えるブール値。有効にすると、キャッシュされた回答を返す前に、LLM を二次チェックとして使用して質問間の類似度を検証します。 | デフォルト: `{"enabled": False, "similarity_threshold": 0.95, "use_llm_check": False}` |
 
 
 ## QueryParam
 
-Use `QueryParam` to control the behavior of your query:
+`QueryParam` を使用してクエリの動作を制御します:
 
 ```python
 class QueryParam:
@@ -170,22 +170,22 @@ class QueryParam:
     """
 ```
 
-> The default value of `top_k` can be changed by the environment variable `TOP_K`.
+> `top_k` のデフォルト値は環境変数 `TOP_K` で変更できます。
 
 
-## LLM and Embedding Injection
+## LLM と Embedding の注入
 
-LightRAG requires LLM and Embedding models for document indexing and querying. During initialization, inject the relevant model functions into LightRAG.
+LightRAG は、ドキュメントのインデクシングとクエリのために LLM と Embedding モデルを必要とします。初期化時に、関連するモデル関数を LightRAG に注入します。
 
-### Model Selection Requirements
+### モデル選択の要件
 
-- **LLM**: at least 32B parameters, 32KB context (64KB recommended). Avoid reasoning models during indexing; use stronger models at query time.
-- **Embedding**: must be consistent across indexing and querying. Recommended: `BAAI/bge-m3`, `text-embedding-3-large`. Changing models requires clearing vector storage.
-- **Reranker**: significantly improves retrieval. When enabled, set query mode to `mix`. Recommended: `BAAI/bge-reranker-v2-m3`, Jina rerankers.
+- **LLM**: 32B パラメータ以上、32KB コンテキスト（64KB 推奨）。インデクシング時は推論モデルを避け、クエリ時はより強力なモデルを使用してください。
+- **Embedding**: インデクシングとクエリで一貫したモデルを使用する必要があります。推奨: `BAAI/bge-m3`、`text-embedding-3-large`。モデルを変更する場合、ベクトルストレージのクリアが必要です。
+- **Reranker**: 検索品質を大幅に向上させます。有効にする場合、クエリモードを `mix` に設定してください。推奨: `BAAI/bge-reranker-v2-m3`、Jina reranker。
 
-#### Using OpenAI-like APIs
+#### OpenAI 互換 API の使用
 
-LightRAG supports OpenAI-like chat/embeddings APIs:
+LightRAG は OpenAI 互換の chat/embeddings API をサポートしています:
 
 ```python
 import os
@@ -225,13 +225,13 @@ async def initialize_rag():
     return rag
 ```
 
-> **Important Note on Embedding Function Wrapping:**
+> **Embedding 関数のラッピングに関する重要な注意事項:**
 >
-> `EmbeddingFunc` cannot be nested. Functions decorated with `@wrap_embedding_func_with_attrs` (such as `openai_embed`, `ollama_embed`, etc.) cannot be wrapped again using `EmbeddingFunc()`. This is why we call `xxx_embed.func` (the underlying unwrapped function) instead of `xxx_embed` directly when creating custom embedding functions.
+> `EmbeddingFunc` はネストできません。`@wrap_embedding_func_with_attrs` でデコレートされた関数（`openai_embed`、`ollama_embed` など）は、`EmbeddingFunc()` で再度ラップすることができません。このため、カスタム Embedding 関数を作成する際は、`xxx_embed` を直接使用するのではなく、`xxx_embed.func`（アンラップされた基底関数）を呼び出します。
 
-#### Using Hugging Face Models
+#### Hugging Face モデルの使用
 
-See `lightrag_hf_demo.py`
+`lightrag_hf_demo.py` を参照してください。
 
 ```python
 from functools import partial
@@ -260,9 +260,9 @@ rag = LightRAG(
 )
 ```
 
-#### Using Ollama Models
+#### Ollama モデルの使用
 
-Pull the model you plan to use and an embedding model, for example `nomic-embed-text`:
+使用するモデルと Embedding モデル（例: `nomic-embed-text`）をプルしてください:
 
 ```python
 import numpy as np
@@ -282,11 +282,11 @@ rag = LightRAG(
 )
 ```
 
-#### Increasing context size
+#### コンテキストサイズの拡大
 
-LightRAG requires at least 32k context tokens. Ollama defaults to 8k. Two approaches:
+LightRAG は最低 32k のコンテキストトークンを必要とします。Ollama のデフォルトは 8k です。2つのアプローチがあります:
 
-*Approach 1: Edit Modelfile*
+*アプローチ 1: Modelfile の編集*
 
 ```bash
 ollama pull qwen2
@@ -296,7 +296,7 @@ ollama show --modelfile qwen2 > Modelfile
 ollama create -f Modelfile qwen2m
 ```
 
-*Approach 2: Set `num_ctx` via `llm_model_kwargs`*
+*アプローチ 2: `llm_model_kwargs` で `num_ctx` を設定*
 
 ```python
 rag = LightRAG(
@@ -308,17 +308,17 @@ rag = LightRAG(
 )
 ```
 
-> **Important Note on Embedding Function Wrapping:**
+> **Embedding 関数のラッピングに関する重要な注意事項:**
 >
-> `EmbeddingFunc` cannot be nested. Use `xxx_embed.func` to access the underlying unwrapped function.
+> `EmbeddingFunc` はネストできません。アンラップされた基底関数にアクセスするには `xxx_embed.func` を使用してください。
 
-**Low RAM GPUs**
+**低 RAM GPU**
 
-For low-RAM GPUs (e.g. 6GB), select a small model and tune the context window. For example, `gemma2:2b` with `num_ctx=26000` can find ~197 entities and 19 relations on `book.txt`.
+低 RAM GPU（例: 6GB）の場合、小さなモデルを選択し、コンテキストウィンドウを調整してください。例えば、`gemma2:2b` で `num_ctx=26000` を設定すると、`book.txt` で約197のエンティティと19のリレーションを検出できます。
 
 #### LlamaIndex
 
-LightRAG supports integration with LlamaIndex (`llm/llama_index_impl.py`):
+LightRAG は LlamaIndex との統合をサポートしています（`llm/llama_index_impl.py`）:
 
 ```python
 import asyncio
@@ -345,13 +345,13 @@ async def initialize_rag():
     return rag
 ```
 
-**Further reading:**
+**参考資料:**
 - [LlamaIndex Documentation](https://developers.llamaindex.ai/python/framework/)
 - [Direct OpenAI Example](examples/unofficial-sample/lightrag_llamaindex_direct_demo.py)
 - [LiteLLM Proxy Example](examples/unofficial-sample/lightrag_llamaindex_litellm_demo.py)
 - [LiteLLM Proxy with Opik Example](examples/unofficial-sample/lightrag_llamaindex_litellm_opik_demo.py)
 
-#### Using Azure OpenAI Models
+#### Azure OpenAI モデルの使用
 
 ```python
 import os
@@ -394,7 +394,7 @@ rag = LightRAG(
 )
 ```
 
-#### Using Google Gemini Models
+#### Google Gemini モデルの使用
 
 ```python
 import os
@@ -434,19 +434,19 @@ rag = LightRAG(
 )
 ```
 
-### Rerank Function Injection
+### Rerank 関数の注入
 
-To enhance retrieval quality, documents can be re-ranked based on a more effective relevance scoring model. The `rerank.py` file provides three Reranker provider driver functions:
+検索品質を向上させるために、より効果的な関連性スコアリングモデルに基づいてドキュメントを再ランク付けできます。`rerank.py` ファイルは3つの Reranker プロバイダドライバ関数を提供しています:
 
 - **Cohere / vLLM**: `cohere_rerank`
 - **Jina AI**: `jina_rerank`
 - **Aliyun**: `ali_rerank`
 
-Inject one of these functions into the `rerank_model_func` attribute of the LightRAG object. For detailed usage, refer to `examples/rerank_example.py`.
+これらの関数のいずれかを LightRAG オブジェクトの `rerank_model_func` 属性に注入してください。詳細な使用方法については、`examples/rerank_example.py` を参照してください。
 
-### User Prompt vs. Query
+### User Prompt とクエリの関係
 
-When using LightRAG for content queries, avoid combining the search process with unrelated output processing, as this significantly impacts query effectiveness. The `user_prompt` parameter in `QueryParam` does not participate in the RAG retrieval phase — it guides the LLM on how to process the retrieved results after the query is completed.
+LightRAG をコンテンツクエリに使用する際、検索プロセスと無関係な出力処理を組み合わせないでください。クエリの効果に大きく影響します。`QueryParam` の `user_prompt` パラメータは RAG 検索フェーズには関与しません。クエリ完了後に取得された結果をどのように処理するかを LLM に指示するものです。
 
 ```python
 query_param = QueryParam(
@@ -462,20 +462,20 @@ print(response_default)
 ```
 
 
-## Storage Backends
+## ストレージバックエンド
 
-### Sotrage Types
+### ストレージタイプ
 
-LightRAG uses 4 types of storage for different purposes:
+LightRAG は、異なる目的に応じて4種類のストレージを使用します:
 
-| Storage Type | Purpose |
+| ストレージタイプ | 目的 |
 |---|---|
-| **KV_STORAGE** | LLM response cache, text chunks, document information |
-| **VECTOR_STORAGE** | Entity/relation/chunk embedding vectors |
-| **GRAPH_STORAGE** | Entity-relation graph structure |
-| **DOC_STATUS_STORAGE** | Document indexing status |
+| **KV_STORAGE** | LLM レスポンスキャッシュ、テキストチャンク、ドキュメント情報 |
+| **VECTOR_STORAGE** | エンティティ/リレーション/チャンクの埋め込みベクトル |
+| **GRAPH_STORAGE** | エンティティ・リレーションのグラフ構造 |
+| **DOC_STATUS_STORAGE** | ドキュメントのインデクシングステータス |
 
-### Supported Implementations
+### サポートされる実装
 
 **KV_STORAGE**
 ```
@@ -495,7 +495,7 @@ MemgraphStorage          Memgraph
 OpenSearchGraphStorage   OpenSearch
 ```
 
-> Testing has shown that Neo4J delivers superior performance in production environments compared to PostgreSQL with AGE plugin.
+> テストにより、本番環境では Neo4J が PostgreSQL with AGE plugin と比較して優れたパフォーマンスを発揮することが示されています。
 
 **VECTOR_STORAGE**
 ```
@@ -516,13 +516,13 @@ MongoDocStatusStorage       MongoDB
 OpenSearchDocStatusStorage  OpenSearch
 ```
 
-Example connection configurations for each storage type can be found in the repository's `env.example` file. The database instance in the connection string must be created beforehand — LightRAG only creates tables within the instance, not the instance itself.
+各ストレージタイプの接続設定例は、リポジトリの `env.example` ファイルにあります。接続文字列内のデータベースインスタンスは事前に作成する必要があります。LightRAG はインスタンス内のテーブルのみを作成し、インスタンス自体は作成しません。
 
-###  Backend-Specific Setup
+### バックエンド固有のセットアップ
 
-#### Using Neo4J Storage
+#### Neo4J Storage の使用
 
-For production level scenarios you will most likely want to leverage an enterprise solution for KG storage. Running Neo4J in Docker is recommended for seamless local testing. See: https://hub.docker.com/_/neo4j
+本番レベルのシナリオでは、KG ストレージにエンタープライズソリューションを活用することを推奨します。シームレスなローカルテストには、Docker での Neo4J の実行を推奨します。参照: https://hub.docker.com/_/neo4j
 
 ```bash
 export NEO4J_URI="neo4j://localhost:7687"
@@ -546,20 +546,20 @@ async def initialize_rag():
     return rag
 ```
 
-See `test_neo4j.py` for a working example.
+動作例については `test_neo4j.py` を参照してください。
 
-#### Using PostgreSQL Storage
+#### PostgreSQL Storage の使用
 
-PostgreSQL can provide a one-stop solution as KV store, VectorDB (pgvector), and GraphDB (apache AGE). PostgreSQL version 16.6 or higher is supported.
+PostgreSQL は、KV ストア、VectorDB（pgvector）、GraphDB（apache AGE）のワンストップソリューションを提供できます。PostgreSQL バージョン 16.6 以上がサポートされています。
 
-- PostgreSQL is lightweight; the whole binary distribution including all necessary plugins can be zipped to 40MB: Ref to [Windows Release](https://github.com/ShanGor/apache-age-windows/releases/tag/PG17%2Fv1.5.0-rc0) as it is easy to install for Linux/Mac.
-- If you prefer Docker, start with this image to avoid hiccups (Default user password: rag/rag): https://hub.docker.com/r/gzdaniel/postgres-for-rag
-- How to start: see [examples/lightrag_gemini_postgres_demo.py](https://github.com/HKUDS/LightRAG/blob/main/examples/lightrag_gemini_postgres_demo.py)
-- For high-performance graph database requirements, Neo4j is recommended as Apache AGE's performance is not as competitive.
+- PostgreSQL は軽量で、必要なプラグインを含むバイナリディストリビューション全体を 40MB に圧縮できます: Linux/Mac では簡単にインストールできるため、[Windows Release](https://github.com/ShanGor/apache-age-windows/releases/tag/PG17%2Fv1.5.0-rc0) を参照してください。
+- Docker を使用する場合は、このイメージから始めてください（デフォルトのユーザーパスワード: rag/rag）: https://hub.docker.com/r/gzdaniel/postgres-for-rag
+- 始め方: [examples/lightrag_gemini_postgres_demo.py](https://github.com/HKUDS/LightRAG/blob/main/examples/lightrag_gemini_postgres_demo.py) を参照
+- 高性能グラフデータベースが必要な場合は、Apache AGE のパフォーマンスは競争力が低いため、Neo4j を推奨します。
 
-#### Using Faiss Storage
+#### Faiss Storage の使用
 
-Before using Faiss, manually install `faiss-cpu` or `faiss-gpu`:
+Faiss を使用する前に、`faiss-cpu` または `faiss-gpu` を手動でインストールしてください:
 
 ```bash
 pip install faiss-cpu
@@ -587,9 +587,9 @@ rag = LightRAG(
 )
 ```
 
-#### Using Memgraph for Storage
+#### Memgraph をストレージに使用
 
-Memgraph is a high-performance, in-memory graph database compatible with the Neo4j Bolt protocol. See: https://memgraph.com/download
+Memgraph は、Neo4j Bolt プロトコルと互換性のある高性能インメモリグラフデータベースです。参照: https://memgraph.com/download
 
 ```bash
 export MEMGRAPH_URI="bolt://localhost:7687"
@@ -606,11 +606,11 @@ async def initialize_rag():
     return rag
 ```
 
-#### Using Milvus for Vector Storage
+#### Milvus をベクトルストレージに使用
 
-Milvus is a high-performance, scalable vector database for production-level vector storage. For full configuration options including index types (HNSW, HNSW_SQ, IVF, DISKANN, etc.) and metric types, see [docs/MilvusConfigurationGuide.md](./MilvusConfigurationGuide.md).
+Milvus は、本番レベルのベクトルストレージ向けの高性能でスケーラブルなベクトルデータベースです。インデックスタイプ（HNSW、HNSW_SQ、IVF、DISKANN など）やメトリックタイプを含む完全な設定オプションについては、[docs/MilvusConfigurationGuide.md](./MilvusConfigurationGuide.md) を参照してください。
 
-**Quick setup via environment variables:**
+**環境変数によるクイックセットアップ:**
 
 ```bash
 MILVUS_URI=http://localhost:19530
@@ -618,7 +618,7 @@ MILVUS_DB_NAME=lightrag
 LIGHTRAG_VECTOR_STORAGE=MilvusVectorDBStorage
 ```
 
-**Quick setup via Python SDK:**
+**Python SDK によるクイックセットアップ:**
 
 ```python
 rag = LightRAG(
@@ -634,15 +634,15 @@ rag = LightRAG(
 )
 ```
 
-#### Using MongoDB Storage
+#### MongoDB Storage の使用
 
-MongoDB provides a one-stop storage solution for LightRAG with native KV storage and vector storage. LightRAG uses MongoDB collections to implement a simple graph storage.
+MongoDB は、ネイティブ KV ストレージとベクトルストレージによる LightRAG のワンストップストレージソリューションを提供します。LightRAG は MongoDB コレクションを使用してシンプルなグラフストレージを実装しています。
 
-`MongoVectorDBStorage` requires a MongoDB deployment with Atlas Search / Vector Search support (e.g., MongoDB Atlas or Atlas local). The setup wizard's bundled local Docker MongoDB service is MongoDB Community Edition — it can be used for KV/graph/doc-status storage but **not** for `MongoVectorDBStorage`.
+`MongoVectorDBStorage` は、Atlas Search / Vector Search をサポートする MongoDB デプロイメント（例: MongoDB Atlas または Atlas local）が必要です。セットアップウィザードにバンドルされたローカル Docker MongoDB サービスは MongoDB Community Edition であり、KV/graph/doc-status ストレージには使用できますが、`MongoVectorDBStorage` には使用**できません**。
 
-#### Using Redis Storage
+#### Redis Storage の使用
 
-LightRAG supports Redis as KV storage. Configure persistence and memory usage carefully. Recommended Redis configuration:
+LightRAG は KV ストレージとして Redis をサポートしています。永続化とメモリ使用量を慎重に設定してください。推奨 Redis 設定:
 
 ```
 save 900 1
@@ -654,28 +654,28 @@ maxmemory-policy noeviction
 maxclients 500
 ```
 
-When the interactive setup manages a local Redis container, it stages a user-editable config at `./data/config/redis.conf` and mounts it into the container. Setup preserves that file on reruns so local Redis tuning can be adjusted without losing manual edits.
+インタラクティブセットアップがローカル Redis コンテナを管理する場合、ユーザー編集可能な設定を `./data/config/redis.conf` にステージングし、コンテナにマウントします。セットアップは再実行時にこのファイルを保持するため、手動の編集を失うことなくローカル Redis のチューニングを調整できます。
 
-#### Using OpenSearch Storage
+#### OpenSearch Storage の使用
 
-OpenSearch provides a unified storage solution for all four LightRAG storage types (KV, Vector, Graph, DocStatus). It offers native k-NN vector search, full-text search, and horizontal scalability without cloud-only restrictions.
+OpenSearch は、LightRAG の4つのストレージタイプ（KV、Vector、Graph、DocStatus）すべてに対応した統合ストレージソリューションを提供します。クラウド限定の制限なしに、ネイティブ k-NN ベクトル検索、全文検索、水平スケーラビリティを提供します。
 
-**Requirements**: OpenSearch 3.x or higher with k-NN plugin enabled.
+**要件**: k-NN プラグインが有効な OpenSearch 3.x 以上。
 
-Install with Docker (without plugins):
+Docker でインストール（プラグインなし）:
 ```bash
 docker run -d -p 9200:9200 -e "discovery.type=single-node" \
   -e "OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password>" \
   opensearchproject/opensearch:latest
 ```
 
-Install with Docker Compose (Recommended, with plugins):
+Docker Compose でインストール（推奨、プラグイン付き）:
 ```bash
 curl -O https://raw.githubusercontent.com/opensearch-project/opensearch-build/main/docker/release/dockercomposefiles/docker-compose-3.x.yml
 OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password> docker-compose -f docker-compose-3.x.yml up -d
 ```
 
-**Configuration** (see `env.example` for full list):
+**設定**（完全なリストは `env.example` を参照）:
 ```bash
 export OPENSEARCH_HOSTS=localhost:9200
 export OPENSEARCH_USER=admin
@@ -684,7 +684,7 @@ export OPENSEARCH_USE_SSL=true
 export OPENSEARCH_VERIFY_CERTS=false
 ```
 
-**Usage**:
+**使用方法**:
 ```python
 rag = LightRAG(
     working_dir=WORKING_DIR,
@@ -697,27 +697,27 @@ rag = LightRAG(
 )
 ```
 
-**Graph Traversal**: When the OpenSearch SQL plugin with PPL support is available, graph queries use server-side BFS via the `graphlookup` command for optimal performance. Otherwise, it falls back to client-side batched BFS. Auto-detected at startup, or force via `OPENSEARCH_USE_PPL_GRAPHLOOKUP=true|false`.
+**グラフ走査**: PPL サポート付きの OpenSearch SQL プラグインが利用可能な場合、グラフクエリは `graphlookup` コマンドによるサーバーサイド BFS を使用して最適なパフォーマンスを実現します。それ以外の場合、クライアントサイドのバッチ BFS にフォールバックします。起動時に自動検出されますが、`OPENSEARCH_USE_PPL_GRAPHLOOKUP=true|false` で強制することもできます。
 
-**Integration Testing**:
+**統合テスト**:
 
-1. Start OpenSearch using Docker Compose:
+1. Docker Compose で OpenSearch を起動:
 ```bash
 OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password> docker-compose -f docker-compose-3.x.yml up -d
 ```
 
-2. Verify the cluster is running:
+2. クラスタの動作を確認:
 ```bash
 curl -sk -u admin:<custom-admin-password> https://localhost:9200
 curl -sk -u admin:<custom-admin-password> https://localhost:9200/_cat/plugins?v
 ```
 
-3. Run unit tests (no OpenSearch required — uses mocks):
+3. ユニットテストを実行（OpenSearch 不要 - モックを使用）:
 ```bash
 python -m pytest tests/test_opensearch_storage.py -v
 ```
 
-4. Run the OpenSearch storage demo:
+4. OpenSearch ストレージデモを実行:
 ```bash
 export OPENSEARCH_HOSTS=localhost:9200
 export OPENSEARCH_USER=admin
@@ -727,13 +727,13 @@ export OPENSEARCH_VERIFY_CERTS=false
 python examples/opensearch_storage_demo.py
 ```
 
-5. Run the full OpenAI + OpenSearch demo (requires `OPENAI_API_KEY`):
+5. 完全な OpenAI + OpenSearch デモを実行（`OPENAI_API_KEY` が必要）:
 ```bash
 export OPENAI_API_KEY=your-api-key
 python examples/lightrag_openai_opensearch_graph_demo.py
 ```
 
-6. Visualize the knowledge graph via LightRAG WebUI:
+6. LightRAG WebUI でナレッジグラフを可視化:
 ```bash
 LIGHTRAG_KV_STORAGE=OpenSearchKVStorage \
 LIGHTRAG_DOC_STATUS_STORAGE=OpenSearchDocStatusStorage \
@@ -748,35 +748,35 @@ lightrag-server
 ```
 
 
-## Data Isolation Between LightRAG Instances
+## LightRAG インスタンス間のデータ分離
 
-The `workspace` parameter ensures data isolation between different LightRAG instances. Once initialized, the `workspace` is immutable.
+`workspace` パラメータは、異なる LightRAG インスタンス間のデータ分離を保証します。初期化後、`workspace` は変更不可です。
 
-| Storage Type | Isolation Method |
+| ストレージタイプ | 分離方法 |
 |---|---|
-| `JsonKVStorage`, `JsonDocStatusStorage`, `NetworkXStorage`, `NanoVectorDBStorage`, `FaissVectorDBStorage` | Workspace subdirectories |
-| `RedisKVStorage`, `MilvusVectorDBStorage`, `MongoKVStorage`, `MongoVectorDBStorage`, `MongoGraphStorage`, `PGGraphStorage` | Workspace prefix on collection name |
-| `QdrantVectorDBStorage` | Payload-based partitioning (Qdrant multitenancy) |
-| `PGKVStorage`, `PGVectorStorage`, `PGDocStatusStorage` | `workspace` field in tables |
-| `Neo4JStorage` | Labels |
-| `OpenSearch*` | Index name prefixes |
+| `JsonKVStorage`, `JsonDocStatusStorage`, `NetworkXStorage`, `NanoVectorDBStorage`, `FaissVectorDBStorage` | ワークスペースサブディレクトリ |
+| `RedisKVStorage`, `MilvusVectorDBStorage`, `MongoKVStorage`, `MongoVectorDBStorage`, `MongoGraphStorage`, `PGGraphStorage` | コレクション名のワークスペースプレフィックス |
+| `QdrantVectorDBStorage` | ペイロードベースのパーティショニング（Qdrant マルチテナンシー） |
+| `PGKVStorage`, `PGVectorStorage`, `PGDocStatusStorage` | テーブル内の `workspace` フィールド |
+| `Neo4JStorage` | ラベル |
+| `OpenSearch*` | インデックス名のプレフィックス |
 
-**Legacy compatibility**: Default workspace for PostgreSQL non-graph storage is `default`; for PostgreSQL AGE graph storage is null; for Neo4j graph storage is `base`.
+**レガシー互換性**: PostgreSQL 非グラフストレージのデフォルトワークスペースは `default`、PostgreSQL AGE グラフストレージは null、Neo4j グラフストレージは `base` です。
 
-Storage-specific workspace environment variables override the common `WORKSPACE` variable: `REDIS_WORKSPACE`, `MILVUS_WORKSPACE`, `QDRANT_WORKSPACE`, `MONGODB_WORKSPACE`, `POSTGRES_WORKSPACE`, `NEO4J_WORKSPACE`, `OPENSEARCH_WORKSPACE`.
+ストレージ固有のワークスペース環境変数は、共通の `WORKSPACE` 変数をオーバーライドします: `REDIS_WORKSPACE`, `MILVUS_WORKSPACE`, `QDRANT_WORKSPACE`, `MONGODB_WORKSPACE`, `POSTGRES_WORKSPACE`, `NEO4J_WORKSPACE`, `OPENSEARCH_WORKSPACE`。
 
-For a practical demonstration of managing multiple isolated knowledge bases, see [Workspace Demo](examples/lightrag_gemini_workspace_demo.py).
+複数の分離されたナレッジベースを管理する実践的なデモについては、[Workspace Demo](examples/lightrag_gemini_workspace_demo.py) を参照してください。
 
 
 ## Insert
 
-* Basic Insert
+* 基本的な Insert
 
 ```python
 rag.insert("Text")
 ```
 
-* Batch Insert
+* バッチ Insert
 
 ```python
 # Basic Batch Insert
@@ -791,11 +791,11 @@ rag = LightRAG(
 rag.insert(["TEXT1", "TEXT2", "TEXT3", ...])  # Processed in batches of 4
 ```
 
-The `max_parallel_insert` parameter determines the number of documents processed concurrently. Default is **2**. Recommended to keep **below 10**, as the bottleneck typically lies with the LLM.
+`max_parallel_insert` パラメータは、同時に処理されるドキュメント数を決定します。デフォルトは **2** です。ボトルネックは通常 LLM にあるため、**10 未満** に保つことを推奨します。
 
-* Insert with ID
+* ID 付き Insert
 
-The number of documents and IDs must be the same.
+ドキュメント数と ID 数は同じである必要があります。
 
 ```python
 # Single text with ID
@@ -805,9 +805,9 @@ rag.insert("TEXT1", ids=["ID_FOR_TEXT1"])
 rag.insert(["TEXT1", "TEXT2", ...], ids=["ID_FOR_TEXT1", "ID_FOR_TEXT2"])
 ```
 
-* Insert using Pipeline
+* Pipeline を使用した Insert
 
-`apipeline_enqueue_documents` and `apipeline_process_enqueue_documents` allow incremental insertion of documents in the background while the main thread continues executing.
+`apipeline_enqueue_documents` と `apipeline_process_enqueue_documents` を使用すると、メインスレッドの実行を継続しながら、バックグラウンドでドキュメントを段階的に挿入できます。
 
 ```python
 rag = LightRAG(..)
@@ -816,9 +816,9 @@ await rag.apipeline_enqueue_documents(input)
 await rag.apipeline_process_enqueue_documents(input)
 ```
 
-* Insert Multi-file Type Support
+* マルチファイルタイプサポートの Insert
 
-The `textract` library supports reading TXT, DOCX, PPTX, CSV, and PDF:
+`textract` ライブラリは TXT、DOCX、PPTX、CSV、PDF の読み取りをサポートしています:
 
 ```python
 import textract
@@ -828,9 +828,9 @@ text_content = textract.process(file_path)
 rag.insert(text_content.decode('utf-8'))
 ```
 
-* Citation Functionality
+* 引用機能
 
-By providing file paths, the system ensures sources can be traced back to their original documents:
+ファイルパスを提供することで、ソースを元のドキュメントまで追跡できることを保証します:
 
 ```python
 documents = ["Document content 1", "Document content 2"]
@@ -840,11 +840,11 @@ rag.insert(documents, file_paths=file_paths)
 ```
 
 
-## Edit Entities and Relations
+## エンティティとリレーションの編集
 
-LightRAG supports comprehensive knowledge graph management: create, edit, and delete entities and relationships.
+LightRAG は包括的なナレッジグラフ管理をサポートしています: エンティティとリレーションシップの作成、編集、削除。
 
-* Create Entities and Relations
+* エンティティとリレーションの作成
 
 ```python
 # Create entity
@@ -866,7 +866,7 @@ relation = rag.create_relation("Google", "Gmail", {
 })
 ```
 
-* Edit Entities and Relations
+* エンティティとリレーションの編集
 
 ```python
 # Edit entity attributes
@@ -889,9 +889,9 @@ updated_relation = rag.edit_relation("Google", "Google Mail", {
 })
 ```
 
-All operations are available in both synchronous and asynchronous versions. Async versions have the prefix "a" (e.g., `acreate_entity`, `aedit_relation`).
+すべての操作は同期版と非同期版の両方で利用できます。非同期版はプレフィックス "a" が付きます（例: `acreate_entity`, `aedit_relation`）。
 
-* Insert Custom KG
+* カスタム KG の Insert
 
 ```python
 custom_kg = {
@@ -959,20 +959,20 @@ custom_kg = {
 rag.insert_custom_kg(custom_kg)
 ```
 
-* Other Entity and Relation Operations
-  - **create_entity**: Creates a new entity with specified attributes
-  - **edit_entity**: Updates an existing entity's attributes or renames it
-  - **create_relation**: Creates a new relation between existing entities
-  - **edit_relation**: Updates an existing relation's attributes
+* その他のエンティティとリレーション操作
+  - **create_entity**: 指定された属性で新しいエンティティを作成
+  - **edit_entity**: 既存のエンティティの属性を更新またはリネーム
+  - **create_relation**: 既存のエンティティ間に新しいリレーションを作成
+  - **edit_relation**: 既存のリレーションの属性を更新
 
-These operations maintain data consistency across both the graph database and vector database components.
+これらの操作は、グラフデータベースとベクトルデータベースの両方のコンポーネント間でデータの一貫性を維持します。
 
 
-## Delete Functions
+## 削除機能
 
-LightRAG provides comprehensive deletion capabilities.
+LightRAG は包括的な削除機能を提供します。
 
-### Delete Entities
+### エンティティの削除
 
 ```python
 # Synchronous
@@ -982,13 +982,13 @@ rag.delete_by_entity("Google")
 await rag.adelete_by_entity("Google")
 ```
 
-When deleting an entity:
-- Removes the entity node from the knowledge graph
-- Deletes all associated relationships
-- Removes related embedding vectors from the vector database
-- Maintains knowledge graph integrity
+エンティティを削除する場合:
+- ナレッジグラフからエンティティノードを削除
+- 関連するすべてのリレーションシップを削除
+- ベクトルデータベースから関連する埋め込みベクトルを削除
+- ナレッジグラフの整合性を維持
 
-### Delete Relations
+### リレーションの削除
 
 ```python
 # Synchronous
@@ -998,35 +998,35 @@ rag.delete_by_relation("Google", "Gmail")
 await rag.adelete_by_relation("Google", "Gmail")
 ```
 
-When deleting a relationship:
-- Removes the specified relationship edge
-- Deletes the relationship's embedding vector
-- Preserves both entity nodes and their other relationships
+リレーションシップを削除する場合:
+- 指定されたリレーションシップエッジを削除
+- リレーションシップの埋め込みベクトルを削除
+- 両方のエンティティノードとその他のリレーションシップは保持
 
-### Delete by Document ID
+### ドキュメント ID による削除
 
 ```python
 # Asynchronous only (complex reconstruction process)
 await rag.adelete_by_doc_id("doc-12345")
 ```
 
-The deletion process:
-1. Delete all text chunks related to the document
-2. Identify and delete entities/relationships that belong only to this document
-3. Rebuild entities/relationships that still exist in other documents
-4. Update all related vector indexes
-5. Clean up document status records
+削除プロセス:
+1. ドキュメントに関連するすべてのテキストチャンクを削除
+2. このドキュメントにのみ属するエンティティ/リレーションシップを特定して削除
+3. 他のドキュメントにまだ存在するエンティティ/リレーションシップを再構築
+4. 関連するすべてのベクトルインデックスを更新
+5. ドキュメントステータスレコードをクリーンアップ
 
-**Important Reminders:**
-1. All deletion operations are **irreversible** — use with caution
-2. Deleting large amounts of data may take time, especially deletion by document ID
-3. Deletion operations automatically maintain consistency between the graph and vector databases
-4. Consider backing up data before performing important deletions
+**重要な注意事項:**
+1. すべての削除操作は**不可逆**です。慎重に使用してください
+2. 大量のデータを削除する場合、特にドキュメント ID による削除は時間がかかることがあります
+3. 削除操作は、グラフデータベースとベクトルデータベース間の一貫性を自動的に維持します
+4. 重要な削除を実行する前にデータのバックアップを検討してください
 
 
-## Entity Merging
+## エンティティのマージ
 
-**Merge Entities and Their Relationships**
+**エンティティとそのリレーションシップのマージ**
 
 ```python
 # Basic merge
@@ -1070,33 +1070,33 @@ rag.merge_entities(
 )
 ```
 
-When merging entities:
-- All relationships from source entities are redirected to the target entity
-- Duplicate relationships are intelligently merged
-- Self-relationships (loops) are prevented
-- Source entities are removed after merging
-- Relationship weights and attributes are preserved
+エンティティをマージする場合:
+- ソースエンティティのすべてのリレーションシップがターゲットエンティティにリダイレクト
+- 重複するリレーションシップはインテリジェントにマージ
+- 自己リレーション（ループ）を防止
+- マージ後にソースエンティティを削除
+- リレーションシップの重みと属性を保持
 
 
-## Troubleshooting
+## トラブルシューティング
 
-### Common Initialization Errors
+### 初期化に関する一般的なエラー
 
 1. **`AttributeError: __aenter__`**
-   - **Cause**: Storage backends not initialized
-   - **Solution**: Call `await rag.initialize_storages()` after creating the LightRAG instance
+   - **原因**: ストレージバックエンドが初期化されていない
+   - **解決方法**: LightRAG インスタンスを作成した後に `await rag.initialize_storages()` を呼び出す
 
 2. **`KeyError: 'history_messages'`**
-   - **Cause**: Pipeline status not initialized
-   - **Solution**: Call `await rag.initialize_storages()` after creating the LightRAG instance
+   - **原因**: パイプラインのステータスが初期化されていない
+   - **解決方法**: LightRAG インスタンスを作成した後に `await rag.initialize_storages()` を呼び出す
 
-3. **Both errors in sequence**
-   - **Solution**: Always follow this pattern:
+3. **両方のエラーが連続して発生する場合**
+   - **解決方法**: 常に以下のパターンに従ってください:
    ```python
    rag = LightRAG(...)
    await rag.initialize_storages()
    ```
 
-### Model Switching Issues
+### モデル切り替えの問題
 
-When switching between different embedding models, you must clear the data directory to avoid errors. The only file you may want to preserve is `kv_store_llm_response_cache.json` if you wish to retain the LLM cache.
+異なる Embedding モデルに切り替える場合、エラーを回避するためにデータディレクトリをクリアする必要があります。LLM キャッシュを保持したい場合に保存しておくべきファイルは `kv_store_llm_response_cache.json` のみです。

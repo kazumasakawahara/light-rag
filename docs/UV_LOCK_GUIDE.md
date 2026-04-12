@@ -1,41 +1,41 @@
-# uv.lock Update Guide
+# uv.lock 更新ガイド
 
-## What is uv.lock?
+## uv.lock とは？
 
-`uv.lock` is uv's lock file. It captures the exact version of every dependency, including transitive ones, much like:
+`uv.lock` は uv のロックファイルです。推移的な依存関係を含む、すべての依存関係の正確なバージョンを記録します。以下と同様の役割を果たします:
 - Node.js `package-lock.json`
 - Rust `Cargo.lock`
 - Python Poetry `poetry.lock`
 
-Keeping `uv.lock` in version control guarantees that everyone installs the same dependency set.
+`uv.lock` をバージョン管理に含めることで、全員が同じ依存関係セットをインストールすることが保証されます。
 
-## When does uv.lock change?
+## uv.lock はいつ変更されるか？
 
-### Situations where it does *not* change automatically
+### 自動的に変更され*ない*ケース
 
-- Running `uv sync --frozen`
-- Building Docker images that call `uv sync --frozen`
-- Editing source code without touching dependency metadata
+- `uv sync --frozen` の実行
+- `uv sync --frozen` を呼び出す Docker イメージのビルド
+- 依存関係のメタデータに触れずにソースコードを編集
 
-### Situations where it will change
+### 変更されるケース
 
-1. **`uv lock` or `uv lock --upgrade`**
+1. **`uv lock` または `uv lock --upgrade`**
 
    ```bash
-   uv lock                # Resolve according to current constraints
-   uv lock --upgrade      # Re-resolve and upgrade to the newest compatible releases
+   uv lock                # 現在の制約に従って解決
+   uv lock --upgrade      # 再解決し、互換性のある最新リリースにアップグレード
    ```
 
-   Use these commands after modifying `pyproject.toml`, when you want fresh dependency versions, or if the lock file was deleted or corrupted.
+   `pyproject.toml` を変更した後、新しい依存関係バージョンが必要な場合、またはロックファイルが削除・破損した場合にこれらのコマンドを使用します。
 
 2. **`uv add`**
 
    ```bash
-    uv add requests           # Adds the dependency and updates both files
-    uv add --dev pytest       # Adds a dev dependency
+    uv add requests           # 依存関係を追加し、両ファイルを更新
+    uv add --dev pytest       # 開発用依存関係を追加
    ```
 
-   `uv add` edits `pyproject.toml` and refreshes `uv.lock` in one step.
+   `uv add` は `pyproject.toml` を編集し、`uv.lock` を一度に更新します。
 
 3. **`uv remove`**
 
@@ -43,49 +43,49 @@ Keeping `uv.lock` in version control guarantees that everyone installs the same 
    uv remove requests
    ```
 
-   This removes the dependency from `pyproject.toml` and rewrites `uv.lock`.
+   `pyproject.toml` から依存関係を削除し、`uv.lock` を再書き込みします。
 
-4. **`uv sync` without `--frozen`**
+4. **`--frozen` なしの `uv sync`**
 
    ```bash
    uv sync
    ```
 
-   Normally this only installs what is already locked. However, if `pyproject.toml` and `uv.lock` disagree or the lock file is missing, uv will regenerate and update `uv.lock`. In CI and production builds you should prefer `uv sync --frozen` to prevent unintended updates.
+   通常はロック済みの内容のみをインストールします。ただし、`pyproject.toml` と `uv.lock` が一致しない場合やロックファイルが存在しない場合、uv は `uv.lock` を再生成・更新します。CI や本番ビルドでは、意図しない更新を防ぐために `uv sync --frozen` を使用することをお勧めします。
 
-## Example workflows
+## ワークフロー例
 
-### Scenario 1: Add a new dependency
+### シナリオ 1: 新しい依存関係の追加
 
 ```bash
-# Recommended: let uv handle both files
+# 推奨: uv に両ファイルを処理させる
 uv add fastapi
 git add pyproject.toml uv.lock
 git commit -m "Add fastapi dependency"
 
-# Manual alternative
-# 1. Edit pyproject.toml
-# 2. Regenerate the lock file
+# 手動の代替方法
+# 1. pyproject.toml を編集
+# 2. ロックファイルを再生成
 uv lock
 git add pyproject.toml uv.lock
 git commit -m "Add fastapi dependency"
 ```
 
-### Scenario 2: Relax or tighten a version constraint
+### シナリオ 2: バージョン制約の緩和または厳格化
 
 ```bash
-# 1. Edit the requirement in pyproject.toml,
-#    e.g. openai>=1.0.0,<2.0.0 -> openai>=1.5.0,<2.0.0
+# 1. pyproject.toml の要件を編集
+#    例: openai>=1.0.0,<2.0.0 -> openai>=1.5.0,<2.0.0
 
-# 2. Re-resolve the lock file
+# 2. ロックファイルを再解決
 uv lock
 
-# 3. Commit both files
+# 3. 両ファイルをコミット
 git add pyproject.toml uv.lock
 git commit -m "Update openai to >=1.5.0"
 ```
 
-### Scenario 3: Upgrade everything to the newest compatible versions
+### シナリオ 3: すべてを互換性のある最新バージョンにアップグレード
 
 ```bash
 uv lock --upgrade
@@ -94,77 +94,77 @@ git add uv.lock
 git commit -m "Upgrade dependencies to latest compatible versions"
 ```
 
-### Scenario 4: Teammate syncing the project
+### シナリオ 4: チームメンバーのプロジェクト同期
 
 ```bash
-git pull               # Fetch latest code and lock file
-uv sync --frozen       # Install exactly what uv.lock specifies
+git pull               # 最新のコードとロックファイルを取得
+uv sync --frozen       # uv.lock で指定された通りにインストール
 ```
 
-## Using uv.lock in Docker
+## Docker での uv.lock の使用
 
 ```dockerfile
 RUN uv sync --frozen --no-dev --extra api
 ```
 
-`--frozen` guarantees reproducible builds because uv will refuse to deviate from the locked versions.
-`--extra api` install API server
+`--frozen` は再現可能なビルドを保証します。uv はロックされたバージョンから逸脱することを拒否します。
+`--extra api` は API サーバーをインストールします
 
-## Generating a lock file that includes offline dependencies
+## オフライン依存関係を含むロックファイルの生成
 
-If you need `uv.lock` to capture the optional offline stacks, regenerate it with the relevant extras enabled:
+`uv.lock` がオプションのオフラインスタックをキャプチャする必要がある場合、関連するエクストラを有効にして再生成します:
 
 ```bash
 uv lock --extra api --extra offline
 ```
 
-This command resolves the base project requirements plus both the `api` and `offline` optional dependency sets, ensuring downstream `uv sync --frozen --extra api --extra offline` installs work without further resolution.
+このコマンドは、ベースプロジェクトの要件に加えて `api` と `offline` の両方のオプション依存関係セットを解決し、下流の `uv sync --frozen --extra api --extra offline` インストールがさらなる解決なしに動作することを保証します。
 
-## Frequently asked questions
+## よくある質問
 
-- **`uv.lock` is almost 1 MB. Does that matter?**
-  No. The file is read only during dependency resolution.
+- **`uv.lock` は約 1 MB あります。問題ですか？**
+  いいえ。このファイルは依存関係の解決時にのみ読み取られます。
 
-- **Should we commit `uv.lock`?**
-  Yes. Commit it so collaborators and CI jobs share the same dependency graph.
+- **`uv.lock` をコミットすべきですか？**
+  はい。コラボレーターや CI ジョブが同じ依存関係グラフを共有できるようにコミットしてください。
 
-- **Deleted the lock file by accident?**
-  Run `uv lock` to regenerate it from `pyproject.toml`.
+- **ロックファイルを誤って削除してしまいました？**
+  `uv lock` を実行して `pyproject.toml` から再生成してください。
 
-- **Can `uv.lock` and `requirements.txt` coexist?**
-  They can, but maintaining both is redundant. Prefer relying on `uv.lock` alone whenever possible.
+- **`uv.lock` と `requirements.txt` は共存できますか？**
+  可能ですが、両方を維持するのは冗長です。可能な限り `uv.lock` のみに依存することをお勧めします。
 
-- **How do I inspect locked versions?**
+- **ロックされたバージョンを確認するには？**
   ```bash
   uv tree
   grep -A5 'name = "openai"' uv.lock
   ```
 
-## Best practices
+## ベストプラクティス
 
-### Recommended
+### 推奨事項
 
-1. Commit `uv.lock` alongside `pyproject.toml`.
-2. Use `uv sync --frozen` in CI, Docker, and other reproducible environments.
-3. Use plain `uv sync` during local development if you want uv to reconcile the lock for you.
-4. Run `uv lock --upgrade` periodically to pick up the latest compatible releases.
-5. Regenerate the lock file immediately after changing dependency constraints.
+1. `uv.lock` を `pyproject.toml` と一緒にコミットする。
+2. CI、Docker、その他の再現可能な環境では `uv sync --frozen` を使用する。
+3. ローカル開発では、uv にロックを調整させたい場合は通常の `uv sync` を使用する。
+4. 互換性のある最新リリースを取得するために定期的に `uv lock --upgrade` を実行する。
+5. 依存関係の制約を変更した後は、直ちにロックファイルを再生成する。
 
-### Avoid
+### 避けるべきこと
 
-1. Running `uv sync` without `--frozen` in CI or production pipelines.
-2. Editing `uv.lock` by hand—uv will overwrite manual edits.
-3. Ignoring lock file diffs in code reviews—unexpected dependency changes can break builds.
+1. CI や本番パイプラインで `--frozen` なしの `uv sync` を実行すること。
+2. `uv.lock` を手動で編集すること -- uv が手動の変更を上書きします。
+3. コードレビューでロックファイルの差分を無視すること -- 予期しない依存関係の変更がビルドを壊す可能性があります。
 
-## Summary
+## まとめ
 
-| Command               | Updates `uv.lock` | Typical use                               |
+| コマンド               | `uv.lock` を更新するか | 一般的な用途                               |
 |-----------------------|-------------------|-------------------------------------------|
-| `uv lock`             | ✅ Yes            | After editing constraints                 |
-| `uv lock --upgrade`   | ✅ Yes            | Upgrade to the newest compatible versions |
-| `uv add <pkg>`        | ✅ Yes            | Add a dependency                          |
-| `uv remove <pkg>`     | ✅ Yes            | Remove a dependency                       |
-| `uv sync`             | ⚠️ Maybe          | Local development; can regenerate the lock |
-| `uv sync --frozen`    | ❌ No             | CI/CD, Docker, reproducible builds        |
+| `uv lock`             | ✅ はい            | 制約の編集後                 |
+| `uv lock --upgrade`   | ✅ はい            | 互換性のある最新バージョンにアップグレード |
+| `uv add <pkg>`        | ✅ はい            | 依存関係の追加                          |
+| `uv remove <pkg>`     | ✅ はい            | 依存関係の削除                       |
+| `uv sync`             | ⚠️ 場合による          | ローカル開発; ロックを再生成する可能性あり |
+| `uv sync --frozen`    | ❌ いいえ             | CI/CD、Docker、再現可能なビルド        |
 
-Remember: `uv.lock` only changes when you run a command that tells it to. Keep it in sync with your project and commit it whenever it changes.
+覚えておいてください: `uv.lock` は、変更を指示するコマンドを実行した場合にのみ変更されます。プロジェクトと同期を保ち、変更があるたびにコミットしてください。

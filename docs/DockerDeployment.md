@@ -1,10 +1,10 @@
-# LightRAG Docker Deployment
+# LightRAG Docker デプロイ
 
-A lightweight Knowledge Graph Retrieval-Augmented Generation system with multiple LLM backend support.
+複数の LLM バックエンドをサポートする軽量なナレッジグラフ検索拡張生成システムです。
 
-## 🚀 Preparation
+## 🚀 準備
 
-### Clone the repository:
+### リポジトリのクローン：
 
 ```bash
 # Linux/MacOS
@@ -17,105 +17,99 @@ git clone https://github.com/HKUDS/LightRAG.git
 cd LightRAG
 ```
 
-### Configure your environment:
+### 環境の設定：
 
 ```bash
 # Linux/MacOS
 cp .env.example .env
-# Edit .env with your preferred configuration
+# .env を好みの設定に編集してください
 ```
 ```powershell
 # Windows PowerShell
 Copy-Item .env.example .env
-# Edit .env with your preferred configuration
+# .env を好みの設定に編集してください
 ```
 
-LightRAG can be configured using environment variables in the `.env` file:
+LightRAG は `.env` ファイルの環境変数で設定できます：
 
-**Server Configuration**
+**サーバー設定**
 
-- `HOST`: Server host (default: 0.0.0.0)
-- `PORT`: Server port (default: 9621)
+- `HOST`：サーバーホスト（デフォルト：0.0.0.0）
+- `PORT`：サーバーポート（デフォルト：9621）
 
-**LLM Configuration**
+**LLM 設定**
 
-- `LLM_BINDING`: LLM backend to use (lollms/ollama/openai)
-- `LLM_BINDING_HOST`: LLM server host URL
-- `LLM_MODEL`: Model name to use
+- `LLM_BINDING`：使用する LLM バックエンド（lollms/ollama/openai）
+- `LLM_BINDING_HOST`：LLM サーバーのホスト URL
+- `LLM_MODEL`：使用するモデル名
 
-**Embedding Configuration**
+**Embedding 設定**
 
-- `EMBEDDING_BINDING`: Embedding backend (lollms/ollama/openai)
-- `EMBEDDING_BINDING_HOST`: Embedding server host URL
-- `EMBEDDING_MODEL`: Embedding model name
+- `EMBEDDING_BINDING`：Embedding バックエンド（lollms/ollama/openai）
+- `EMBEDDING_BINDING_HOST`：Embedding サーバーのホスト URL
+- `EMBEDDING_MODEL`：Embedding モデル名
 
-**RAG Configuration**
+**RAG 設定**
 
-- `MAX_ASYNC`: Maximum async operations
-- `MAX_TOKENS`: Maximum token size
-- `EMBEDDING_DIM`: Embedding dimensions
+- `MAX_ASYNC`：最大非同期操作数
+- `MAX_TOKENS`：最大トークンサイズ
+- `EMBEDDING_DIM`：Embedding の次元数
 
-## 🐳 Docker Deployment
+## 🐳 Docker デプロイ
 
-Docker instructions work the same on all platforms with Docker Desktop installed.
+Docker Desktop がインストールされていれば、Docker の手順はすべてのプラットフォームで共通です。
 
-### Build Optimization
+### ビルドの最適化
 
-The Dockerfile uses BuildKit cache mounts to significantly improve build performance:
+Dockerfile は BuildKit キャッシュマウントを使用してビルドパフォーマンスを大幅に向上させます：
 
-- **Automatic cache management**: BuildKit is automatically enabled via `# syntax=docker/dockerfile:1` directive
-- **Faster rebuilds**: Only downloads changed dependencies when `uv.lock` or `bun.lock` files are modified
-- **Efficient package caching**: UV and Bun package downloads are cached across builds
-- **No manual configuration needed**: Works out of the box in Docker Compose and GitHub Actions
+- **自動キャッシュ管理**：`# syntax=docker/dockerfile:1` ディレクティブにより BuildKit が自動的に有効になります
+- **高速な再ビルド**：`uv.lock` または `bun.lock` ファイルが変更された場合のみ、変更された依存関係をダウンロードします
+- **効率的なパッケージキャッシュ**：UV および Bun のパッケージダウンロードがビルド間でキャッシュされます
+- **手動設定不要**：Docker Compose および GitHub Actions でそのまま動作します
 
-### Start LightRAG  server:
+### LightRAG サーバーの起動：
 
 ```bash
 docker compose up -d
 ```
 
-If you used the interactive setup, start the generated stack with:
+インタラクティブセットアップを使用した場合は、生成されたスタックを以下で起動します：
 
 ```bash
 docker compose -f docker-compose.final.yml up -d
 ```
 
-The interactive setup keeps `.env` host-usable. Container-only hostnames such as `postgres` or `host.docker.internal`, along with staged SSL paths under `/app/data/certs/`, are injected into the generated `docker-compose.final.yml` for the `lightrag` service instead of being persisted back into `.env`.
-On reruns, unchanged wizard-managed service blocks in `docker-compose.final.yml` are preserved by
-default. To repair or fully regenerate those managed blocks from the bundled templates, rerun the
-matching setup target with `make env-base-rewrite` or `make env-storage-rewrite`.
+インタラクティブセットアップは `.env` をホストで使用可能な状態に保ちます。`postgres` や `host.docker.internal` などのコンテナ専用ホスト名、および `/app/data/certs/` 配下のステージングされた SSL パスは、`.env` に書き戻すのではなく、生成された `docker-compose.final.yml` の `lightrag` サービスに注入されます。
+再実行時、`docker-compose.final.yml` 内のウィザード管理のサービスブロックは、変更がなければデフォルトで保持されます。管理対象ブロックを修復または完全に再生成するには、`make env-base-rewrite` または `make env-storage-rewrite` で対応するセットアップターゲットを再実行してください。
 
-If the generated stack includes local Milvus, compose resolves `MINIO_ACCESS_KEY_ID` and
-`MINIO_SECRET_ACCESS_KEY` at startup from the repo `.env` or exported shell environment. The
-generated compose file does not snapshot those values, and `docker compose` exits immediately if
-either variable is missing.
+生成されたスタックにローカル Milvus が含まれている場合、compose は起動時にリポジトリの `.env` またはエクスポートされたシェル環境から `MINIO_ACCESS_KEY_ID` と `MINIO_SECRET_ACCESS_KEY` を解決します。生成された compose ファイルはこれらの値をスナップショットしないため、いずれかの変数が欠けていると `docker compose` は直ちに終了します。
 
-Before exposing the generated stack beyond localhost, run:
+生成されたスタックを localhost 以外に公開する前に、以下を実行してください：
 
 ```bash
 make env-security-check
 ```
 
-That command audits the current `.env` for missing authentication, unsafe whitelist settings, weak
-JWT secrets, and other setup-level security risks without rewriting any files.
+このコマンドは、認証の欠如、安全でないホワイトリスト設定、脆弱な JWT シークレット、およびその他のセットアップレベルのセキュリティリスクについて、ファイルを書き換えることなく現在の `.env` を監査します。
 
-LightRAG Server uses the following paths for data storage:
+LightRAG Server はデータストレージに以下のパスを使用します：
 
 ```
 data/
-├── rag_storage/    # RAG data persistence
-└── inputs/         # Input documents
+├── rag_storage/    # RAG データの永続化
+└── inputs/         # 入力ドキュメント
 ```
 
-### Optional: local vLLM embedding and reranker
+### オプション：ローカル vLLM Embedding およびリランカー
 
-To run embedding and/or reranking locally with vLLM, run `make env-base` and answer `yes` when prompted to run the embedding model and rerank service locally via Docker.
-That configures the embedding service to use `BAAI/bge-m3` on port 8001 with a local vLLM server, and can also add a `vllm-rerank` service on port 8000.
+Embedding やリランキングを vLLM でローカル実行するには、`make env-base` を実行し、Docker で Embedding モデルとリランクサービスをローカル実行するかどうかの質問に `yes` と答えてください。
+これにより、Embedding サービスがポート 8001 でローカル vLLM サーバーを使用して `BAAI/bge-m3` を使用するように設定され、ポート 8000 に `vllm-rerank` サービスも追加できます。
 
-Alternatively, rerun `make env-base` later and enable only the rerank Docker prompt to add the `vllm-rerank` service automatically.
-vLLM provides a `v1/rerank` endpoint that works with the `cohere` binding.
+また、後から `make env-base` を再実行し、リランク Docker プロンプトのみを有効にすることで、`vllm-rerank` サービスを自動的に追加することもできます。
+vLLM は `cohere` バインディングで動作する `v1/rerank` エンドポイントを提供します。
 
-Example `docker-compose.override.yml` for GPU hosts (embedding + reranker):
+GPU ホスト向けの `docker-compose.override.yml` の例（Embedding + リランカー）：
 
 ```yaml
 services:
@@ -160,7 +154,7 @@ services:
               capabilities: [gpu]
 ```
 
-For CPU-only hosts, use the official CPU image instead:
+CPU のみのホストの場合は、代わりに公式の CPU イメージを使用してください：
 
 ```yaml
 services:
@@ -187,7 +181,7 @@ services:
       - ./data/hf-cache:/root/.cache/huggingface
 ```
 
-Add the embedding and rerank config to `.env`:
+Embedding とリランクの設定を `.env` に追加します：
 
 ```bash
 EMBEDDING_BINDING=openai
@@ -204,84 +198,83 @@ RERANK_BINDING_API_KEY=local-key
 VLLM_RERANK_DEVICE=cpu
 ```
 
-If LightRAG runs in Docker while vLLM runs on the host, the generated compose file rewrites those endpoints to:
+LightRAG が Docker 内で実行され、vLLM がホスト上で実行されている場合、生成された compose ファイルはこれらのエンドポイントを以下のように書き換えます：
 
 ```bash
 EMBEDDING_BINDING_HOST=http://host.docker.internal:8001/v1
 RERANK_BINDING_HOST=http://host.docker.internal:8000/rerank
 ```
 
-For GPU, set:
+GPU を使用する場合は、以下を設定します：
 
 ```bash
 VLLM_EMBED_DEVICE=cuda
 VLLM_RERANK_DEVICE=cuda
 ```
 
-Ensure the NVIDIA Container Toolkit is installed and the host has CUDA drivers available.
-The setup wizard uses the CPU image by default for `cpu` device and the GPU image for `cuda` device.
-When rerunning `make env-base`, an existing `VLLM_EMBED_DEVICE` / `VLLM_RERANK_DEVICE` value is
-preserved instead of being overwritten by a fresh GPU auto-detection result.
-Those templates already pin the matching vLLM `--dtype` (`float32` on CPU, `float16` on CUDA), so no separate `VLLM_*_DTYPE` environment variables are needed.
+NVIDIA Container Toolkit がインストールされており、ホストに CUDA ドライバーが利用可能であることを確認してください。
+セットアップウィザードは、`cpu` デバイスの場合はデフォルトで CPU イメージを、`cuda` デバイスの場合は GPU イメージを使用します。
+`make env-base` を再実行する際、既存の `VLLM_EMBED_DEVICE` / `VLLM_RERANK_DEVICE` の値は、新しい GPU 自動検出結果で上書きされるのではなく保持されます。
+これらのテンプレートは対応する vLLM の `--dtype`（CPU では `float32`、CUDA では `float16`）を既にピン留めしているため、別途 `VLLM_*_DTYPE` 環境変数は不要です。
 
-### SSL certificates
+### SSL 証明書
 
-The setup wizard stages TLS certificate files under `./data/certs/` before generating the compose file.
-This keeps generated host mounts under the same `./data` root used by the default Docker deployment.
+セットアップウィザードは、compose ファイルを生成する前に TLS 証明書ファイルを `./data/certs/` 配下にステージングします。
+これにより、生成されたホストマウントがデフォルトの Docker デプロイで使用される同じ `./data` ルート配下に維持されます。
 
-### PostgreSQL image
+### PostgreSQL イメージ
 
-The interactive setup defaults PostgreSQL to `gzdaniel/postgres-for-rag:16.6`.
-That image bundles both Apache AGE and pgvector so the generated stack works with `PGGraphStorage` and `PGVectorStorage` without extra extension setup.
+インタラクティブセットアップでは、PostgreSQL のデフォルトとして `gzdaniel/postgres-for-rag:16.6` を使用します。
+このイメージには Apache AGE と pgvector の両方がバンドルされているため、追加のエクステンションセットアップなしで `PGGraphStorage` および `PGVectorStorage` で生成されたスタックが動作します。
 
-### Updates
+### アップデート
 
-To update the Docker container:
+Docker コンテナを更新するには：
 ```bash
 docker compose pull
 docker compose down
 docker compose up
 ```
 
-### Offline deployment
+### オフラインデプロイ
 
-Software packages requiring `transformers`, `torch`, or `cuda` will is not preinstalled in the dokcer images. Consequently, document extraction tools such as Docling, as well as local LLM models like Hugging Face and LMDeploy, can not be used in an off line enviroment. These high-compute-resource-demanding services should not be integrated into LightRAG. Docling will be decoupled and deployed as a standalone service.
+`transformers`、`torch`、`cuda` を必要とするソフトウェアパッケージは、Docker イメージにプリインストールされていません。そのため、Docling などのドキュメント抽出ツールや、Hugging Face や LMDeploy などのローカル LLM モデルは、オフライン環境では使用できません。これらの高い計算リソースを要求するサービスは、LightRAG に統合すべきではありません。Docling は分離され、スタンドアロンサービスとしてデプロイされる予定です。
 
-## 📦 Build Docker Images
+## 📦 Docker イメージのビルド
 
-### For local development and testing
+### ローカル開発・テスト用
 
 ```bash
-# Build and run with Docker Compose (BuildKit automatically enabled)
+# Docker Compose でビルドして実行（BuildKit は自動的に有効）
 docker compose up --build
 
-# Or explicitly enable BuildKit if needed
+# または、必要に応じて BuildKit を明示的に有効化
 DOCKER_BUILDKIT=1 docker compose up --build
 ```
 
-**Note**: BuildKit is automatically enabled by the `# syntax=docker/dockerfile:1` directive in the Dockerfile, ensuring optimal caching performance.
+**注意**：BuildKit は Dockerfile の `# syntax=docker/dockerfile:1` ディレクティブにより自動的に有効化され、最適なキャッシュパフォーマンスが保証されます。
 
-### For production release
+### 本番リリース用
 
- **multi-architecture build and push**:
+**マルチアーキテクチャのビルドとプッシュ**：
 
 ```bash
-# Use the provided build script
+# 提供されたビルドスクリプトを使用
 ./docker-build-push.sh
 ```
 
-**The build script will**:
+**ビルドスクリプトの動作**：
 
-- Check Docker registry login status
-- Create/use buildx builder automatically
-- Build for both AMD64 and ARM64 architectures
-- Push to GitHub Container Registry (ghcr.io)
-- Verify the multi-architecture manifest
+- Docker レジストリのログイン状態を確認
+- buildx ビルダーを自動的に作成/使用
+- AMD64 と ARM64 の両アーキテクチャ向けにビルド
+- GitHub Container Registry（ghcr.io）にプッシュ
+- マルチアーキテクチャマニフェストを検証
 
-**Prerequisites**:
+**前提条件**：
 
-Before building multi-architecture images, ensure you have:
+マルチアーキテクチャイメージをビルドする前に、以下を確認してください：
 
-- Docker 20.10+ with Buildx support
-- Sufficient disk space (20GB+ recommended for offline image)
-- Registry access credentials (if pushing images)
+- Buildx サポートのある Docker 20.10+
+- 十分なディスク容量（オフラインイメージ用に 20GB+ を推奨）
+- レジストリアクセス認証情報（イメージをプッシュする場合）

@@ -1,8 +1,8 @@
-# Interactive Setup Guide
+# インタラクティブセットアップガイド
 
-Use the interactive setup wizard when you want LightRAG to guide you through the configuration instead of editing `.env` by hand.
+`.env` を手動で編集する代わりに、LightRAG に設定を案内してもらいたい場合は、インタラクティブセットアップウィザードを使用してください。
 
-The wizard is exposed through `make` targets:
+ウィザードは `make` ターゲットを通じて公開されています:
 
 - `make env-base`
 - `make env-storage`
@@ -13,273 +13,273 @@ The wizard is exposed through `make` targets:
 - `make env-base-rewrite`
 - `make env-storage-rewrite`
 
-You do not need to call the underlying shell script directly.
+基盤となるシェルスクリプトを直接呼び出す必要はありません。
 
-## What This Wizard Is For
+## このウィザードの用途
 
-The setup wizard helps you configure LightRAG in three parts:
+セットアップウィザードは、LightRAG の設定を 3 つのパートで支援します:
 
-- `env-base` sets up the LLM, embedding model, and optional reranker.
-- `env-storage` adds or changes storage backends such as PostgreSQL, Neo4j, Redis, Milvus, Qdrant, MongoDB, or Memgraph.
-- `env-server` sets server host and port, WebUI labels, authentication, API keys, and SSL.
+- `env-base` は LLM、埋め込みモデル、およびオプションのリランカーを設定します。
+- `env-storage` は PostgreSQL、Neo4j、Redis、Milvus、Qdrant、MongoDB、Memgraph などのストレージバックエンドを追加または変更します。
+- `env-server` はサーバーのホストとポート、WebUI のラベル、認証、API キー、SSL を設定します。
 
-You can rerun each step later. The wizard loads your existing `.env` and shows current values as defaults, so you only need to change what is different.
+各ステップは後から再実行できます。ウィザードは既存の `.env` を読み込み、現在の値をデフォルトとして表示するため、変更が必要な部分のみ修正すればよいです。
 
-## Before You Start
+## 開始前の準備
 
-- Run commands from the repository root.
-- The `make env-*` targets automatically choose a compatible Bash 4+ interpreter.
-- Use the documented `make env-*` targets rather than invoking the setup script yourself.
-- `make env-base` is the normal starting point because it creates the initial `.env`.
-- `make env-storage` and `make env-server` require an existing `.env`.
-- If you choose any wizard-managed Docker service, the wizard also prepares LightRAG for the Docker startup path.
+- リポジトリのルートからコマンドを実行してください。
+- `make env-*` ターゲットは互換性のある Bash 4+ インタープリタを自動的に選択します。
+- セットアップスクリプトを直接呼び出すのではなく、ドキュメントに記載された `make env-*` ターゲットを使用してください。
+- `make env-base` は初期の `.env` を作成するため、通常の開始点です。
+- `make env-storage` と `make env-server` は既存の `.env` が必要です。
+- ウィザード管理の Docker サービスを選択した場合、ウィザードは Docker 起動パスに向けて LightRAG の準備も行います。
 
-## Choose Your Setup Path
+## セットアップパスの選択
 
-Use this quick guide to decide what to run:
+何を実行するか判断するためのクイックガイド:
 
-- I want the fastest first run with remote model providers: `make env-base`
-- I want embedding or reranking to run locally in Docker: `make env-base`
-- I already configured models and now want databases: `make env-storage`
-- I already configured models and now want auth, API keys, or SSL: `make env-server`
-- I want to check whether my current setup is valid: `make env-validate`
-- I want to audit my current setup before exposing it: `make env-security-check`
-- I want a standalone backup without changing configuration: `make env-backup`
-- I need to repair the generated compose services from the bundled templates: `make env-base-rewrite` or `make env-storage-rewrite`
+- リモートモデルプロバイダーで最速の初回実行をしたい場合: `make env-base`
+- 埋め込みやリランキングを Docker でローカル実行したい場合: `make env-base`
+- モデルの設定が完了し、データベースを追加したい場合: `make env-storage`
+- モデルの設定が完了し、認証、API キー、SSL を設定したい場合: `make env-server`
+- 現在のセットアップが有効か確認したい場合: `make env-validate`
+- 公開前に現在のセットアップを監査したい場合: `make env-security-check`
+- 設定を変更せずにスタンドアロンバックアップを作成したい場合: `make env-backup`
+- バンドルされたテンプレートから生成された Compose サービスを修復する必要がある場合: `make env-base-rewrite` または `make env-storage-rewrite`
 
-## Scenario 1: First-Time Local Setup
+## シナリオ 1: 初回ローカルセットアップ
 
-Use this when you want LightRAG running with the least amount of setup and you already have remote model endpoints or API keys.
+リモートモデルエンドポイントまたは API キーを既にお持ちで、最小限のセットアップで LightRAG を実行したい場合に使用します。
 
-**Command**
+**コマンド**
 
 ```bash
 make env-base
 ```
 
-**What the wizard asks**
+**ウィザードが質問する内容**
 
-- LLM provider, model, endpoint, and API key
-- Whether the embedding model should run locally via Docker
-- If embedding stays remote: embedding provider, model, dimension, endpoint, and API key
-- Whether reranking should be enabled
-- If reranking is enabled: whether the rerank service should run locally via Docker
-- If reranking stays remote: rerank provider, model, endpoint, and API key
+- LLM プロバイダー、モデル、エンドポイント、API キー
+- 埋め込みモデルを Docker 経由でローカル実行するかどうか
+- 埋め込みがリモートの場合: 埋め込みプロバイダー、モデル、次元数、エンドポイント、API キー
+- リランキングを有効にするかどうか
+- リランキングを有効にした場合: リランクサービスを Docker 経由でローカル実行するかどうか
+- リランキングがリモートの場合: リランクプロバイダー、モデル、エンドポイント、API キー
 
-**What gets written**
+**書き込まれるもの**
 
 - `.env`
-- `docker-compose.final.yml` only if you enabled wizard-managed Docker services
+- ウィザード管理の Docker サービスを有効にした場合のみ `docker-compose.final.yml`
 
-**What to do next**
+**次のステップ**
 
-- If you did not enable wizard-managed Docker services:
+- ウィザード管理の Docker サービスを有効にしなかった場合:
 
 ```bash
 lightrag-server
 ```
 
-- If you enabled wizard-managed Docker services:
+- ウィザード管理の Docker サービスを有効にした場合:
 
 ```bash
 docker compose -f docker-compose.final.yml up -d
 ```
 
-## Scenario 2: Local Setup With Docker-Hosted Embedding or Rerank
+## シナリオ 2: Docker ホスト型の埋め込みまたはリランクを使用したローカルセットアップ
 
-Use this when you want LightRAG to run local inference services for embedding and/or reranking through Docker.
+Docker を通じて埋め込みやリランキングのローカル推論サービスを実行したい場合に使用します。
 
-**Command**
+**コマンド**
 
 ```bash
 make env-base
 ```
 
-**Recommended answers**
+**推奨回答**
 
-- Answer `yes` to `Run embedding model locally via Docker (vLLM)?` if you want local embeddings
-- Answer `yes` to `Enable reranking?` and then `yes` to `Run rerank service locally via Docker?` if you want local reranking
+- ローカル埋め込みを使用したい場合は `Run embedding model locally via Docker (vLLM)?` に `yes` と回答
+- ローカルリランキングを使用したい場合は `Enable reranking?` に `yes` と回答し、次に `Run rerank service locally via Docker?` に `yes` と回答
 
-**What the wizard asks after you enable local services**
+**ローカルサービスを有効にした後のウィザードの質問内容**
 
-- Embedding model name for local vLLM
-- Rerank model name for local vLLM
-- Remote LLM details if your main LLM is still external
+- ローカル vLLM 用の埋め込みモデル名
+- ローカル vLLM 用のリランクモデル名
+- メイン LLM がまだ外部の場合のリモート LLM の詳細
 
-**What gets written**
+**書き込まれるもの**
 
 - `.env`
-- `docker-compose.final.yml` with the selected local services
+- 選択されたローカルサービスを含む `docker-compose.final.yml`
 
-**What to do next**
+**次のステップ**
 
 ```bash
 docker compose -f docker-compose.final.yml up -d
 ```
 
-This starts the generated Docker-based LightRAG stack together with the selected local services.
+これにより、生成された Docker ベースの LightRAG スタックが選択されたローカルサービスとともに起動します。
 
-## Scenario 3: Add Storage After The Base Setup
+## シナリオ 3: ベースセットアップ後にストレージを追加
 
-Use this when you already have `.env` from `make env-base` and now want to switch from default local-file storage to database-backed storage.
+`make env-base` で `.env` を既に作成済みで、デフォルトのローカルファイルストレージからデータベースバックエンドのストレージに切り替えたい場合に使用します。
 
-**Command**
+**コマンド**
 
 ```bash
 make env-storage
 ```
 
-**Prerequisite**
+**前提条件**
 
-- `.env` must already exist
+- `.env` が既に存在している必要があります
 
-**What the wizard asks**
+**ウィザードが質問する内容**
 
-- KV storage backend
-- Vector storage backend
-- Graph storage backend
-- Doc-status storage backend
-- For each required database, whether it should run locally via Docker
-- For each required database, the needed connection details such as host, URI, port, user, password, database name, or device type
+- KV ストレージバックエンド
+- ベクトルストレージバックエンド
+- グラフストレージバックエンド
+- ドキュメントステータスストレージバックエンド
+- 必要な各データベースについて、Docker 経由でローカル実行するかどうか
+- 必要な各データベースについて、ホスト、URI、ポート、ユーザー、パスワード、データベース名、デバイスタイプなどの接続詳細
 
-**Important rule**
+**重要なルール**
 
-- If you choose `MongoVectorDBStorage` for vector storage, the wizard does not offer the bundled local Docker MongoDB service. You must provide a MongoDB deployment that supports Atlas Search / Vector Search.
+- ベクトルストレージに `MongoVectorDBStorage` を選択した場合、ウィザードはバンドルされたローカル Docker MongoDB サービスを提供しません。Atlas Search / Vector Search をサポートする MongoDB デプロイメントを用意する必要があります。
 
-**What gets written**
+**書き込まれるもの**
 
 - `.env`
-- `docker-compose.final.yml` if you selected wizard-managed storage services
+- ウィザード管理のストレージサービスを選択した場合は `docker-compose.final.yml`
 
-**What to do next**
+**次のステップ**
 
-- If you selected Docker-managed storage services:
+- Docker 管理のストレージサービスを選択した場合:
 
 ```bash
 docker compose -f docker-compose.final.yml up -d
 ```
 
-- If you pointed LightRAG at external databases, make sure those services are reachable before starting LightRAG.
+- LightRAG を外部データベースに接続する場合は、LightRAG を起動する前にそれらのサービスが到達可能であることを確認してください。
 
-## Scenario 4: Harden A Deployment With Auth And SSL
+## シナリオ 4: 認証と SSL によるデプロイメントの強化
 
-Use this when you already have `.env` and need to prepare the server for shared or external use.
+`.env` が既に存在し、共有または外部利用のためにサーバーを準備する必要がある場合に使用します。
 
-**Commands**
+**コマンド**
 
 ```bash
 make env-server
 make env-security-check
 ```
 
-**Prerequisite**
+**前提条件**
 
-- `.env` must already exist
+- `.env` が既に存在している必要があります
 
-**What `env-server` asks**
+**`env-server` が質問する内容**
 
-- Server host and port
-- WebUI title and description
-- Summary language
-- Whether to configure authentication and API key settings
-- Auth accounts, JWT secret, token lifetime, API key, and whitelist paths
-- Whether to enable SSL/TLS
-- SSL certificate file path and SSL key file path
+- サーバーのホストとポート
+- WebUI のタイトルと説明
+- サマリー言語
+- 認証と API キー設定を構成するかどうか
+- 認証アカウント、JWT シークレット、トークン有効期間、API キー、ホワイトリストパス
+- SSL/TLS を有効にするかどうか
+- SSL 証明書ファイルパスと SSL キーファイルパス
 
-**What gets written**
+**書き込まれるもの**
 
 - `.env`
-- `docker-compose.final.yml` may be updated if your current setup already uses wizard-managed Docker services
+- 現在のセットアップが既にウィザード管理の Docker サービスを使用している場合は `docker-compose.final.yml` が更新される場合があります
 
-**What to do next**
+**次のステップ**
 
-- Run `make env-security-check`
-- If the stack uses Docker, recreate the LightRAG service with your compose file
-- If the stack runs on the host, restart `lightrag-server`
+- `make env-security-check` を実行
+- スタックが Docker を使用している場合は、Compose ファイルで LightRAG サービスを再作成
+- スタックがホスト上で実行されている場合は、`lightrag-server` を再起動
 
-For broader deployment guidance, see [DockerDeployment.md](/Users/ydh/mycode/ai/paper-RAG/docs/DockerDeployment.md).
+より広範なデプロイメントガイダンスについては、[DockerDeployment.md](/Users/ydh/mycode/ai/paper-RAG/docs/DockerDeployment.md) を参照してください。
 
-## Validate, Audit, And Backup
+## 検証、監査、バックアップ
 
-These commands do not walk you through a full setup flow, but they are part of normal operations.
+これらのコマンドは完全なセットアップフローを案内するものではありませんが、通常の運用の一部です。
 
-### Validate The Current Configuration
+### 現在の設定を検証
 
 ```bash
 make env-validate
 ```
 
-Use this when you want to confirm that the current `.env` is internally consistent. It reports problems such as missing required values, malformed auth settings, invalid URIs, invalid ports, or missing SSL files.
+現在の `.env` が内部的に整合しているか確認したい場合に使用します。必須値の欠落、認証設定の不正、無効な URI、無効なポート、SSL ファイルの欠落などの問題を報告します。
 
-### Audit Security Before Exposure
+### 公開前のセキュリティ監査
 
 ```bash
 make env-security-check
 ```
 
-Use this before exposing LightRAG beyond localhost. It reports risky setups such as missing authentication, weak or missing JWT secrets, unsafe whitelist settings, or unresolved sensitive placeholders.
+LightRAG を localhost 以外に公開する前に使用します。認証の欠落、脆弱または欠落した JWT シークレット、安全でないホワイトリスト設定、未解決の機密プレースホルダーなどのリスクのある設定を報告します。
 
-### Create A Standalone Backup
+### スタンドアロンバックアップの作成
 
 ```bash
 make env-backup
 ```
 
-Use this when you want a manual backup without running any setup flow.
+セットアップフローを実行せずに手動バックアップを作成したい場合に使用します。
 
-## Outputs And What They Mean
+## 出力とその意味
 
 ### `.env`
 
-The wizard writes `.env` in the repository root. This file becomes the current runtime configuration produced by the latest wizard run.
+ウィザードはリポジトリルートに `.env` を書き込みます。このファイルは、最新のウィザード実行によって生成された現在のランタイム設定となります。
 
-In practice, this means:
+実際には以下を意味します:
 
-- rerunning the wizard updates `.env`
-- existing values are reused as defaults on later runs
-- you should treat `.env` as the active configuration for the workflow you most recently configured
-- before `env-base`, `env-storage`, or `env-server` writes `.env`, the wizard automatically creates a timestamped backup of the existing file when one is present
+- ウィザードを再実行すると `.env` が更新されます
+- 既存の値は後続の実行でデフォルトとして再利用されます
+- `.env` は最後に設定したワークフローのアクティブな設定として扱う必要があります
+- `env-base`、`env-storage`、`env-server` が `.env` を書き込む前に、既存のファイルが存在する場合、ウィザードは自動的にタイムスタンプ付きバックアップを作成します
 
 ### `docker-compose.final.yml`
 
-The wizard creates or updates `docker-compose.final.yml` only when you choose wizard-managed Docker services or when an existing wizard-generated compose setup needs to stay aligned with new server settings.
+ウィザードは、ウィザード管理の Docker サービスを選択した場合、または既存のウィザード生成 Compose セットアップを新しいサーバー設定と整合させる必要がある場合にのみ、`docker-compose.final.yml` を作成または更新します。
 
-When one of the setup flows is about to replace or remove an existing generated compose file, it automatically creates a timestamped backup first.
+セットアップフローの一つが既存の生成された Compose ファイルを置換または削除しようとする場合、事前にタイムスタンプ付きバックアップを自動的に作成します。
 
-Use this file when starting the generated Docker stack:
+生成された Docker スタックを起動する際にこのファイルを使用してください:
 
 ```bash
 docker compose -f docker-compose.final.yml up -d
 ```
 
-The base `docker-compose.yml` remains the general project compose file. The generated `docker-compose.final.yml` is the wizard-managed output.
+ベースの `docker-compose.yml` は汎用プロジェクト Compose ファイルのままです。生成された `docker-compose.final.yml` はウィザード管理の出力です。
 
-## Troubleshooting And Advanced Notes
+## トラブルシューティングと高度な注意事項
 
-- If `make env-storage` or `make env-server` says `.env` is missing, run `make env-base` first.
-- You do not need to run `make env-backup` before rerunning `env-base`, `env-storage`, or `env-server`; those flows already back up the existing `.env`, and they also back up the generated compose file before changing it.
-- If you need to fully rebuild wizard-managed compose services from the current bundled templates, use `make env-base-rewrite` or `make env-storage-rewrite`.
-- If you switch between host-oriented and Docker-oriented workflows, rerun the relevant setup step instead of trying to manually merge old settings.
-- If the generated stack includes local Milvus, make sure `MINIO_ACCESS_KEY_ID` and `MINIO_SECRET_ACCESS_KEY` are available before running `docker compose -f docker-compose.final.yml up -d`.
-- For Docker deployment details beyond the interactive wizard, see [DockerDeployment.md](/Users/ydh/mycode/ai/paper-RAG/docs/DockerDeployment.md).
+- `make env-storage` または `make env-server` が `.env` が見つからないと表示する場合は、まず `make env-base` を実行してください。
+- `env-base`、`env-storage`、`env-server` を再実行する前に `make env-backup` を実行する必要はありません。これらのフローは既に既存の `.env` をバックアップし、変更前に生成された Compose ファイルもバックアップします。
+- 現在のバンドルテンプレートからウィザード管理の Compose サービスを完全に再構築する必要がある場合は、`make env-base-rewrite` または `make env-storage-rewrite` を使用してください。
+- ホスト指向と Docker 指向のワークフロー間で切り替える場合は、古い設定を手動でマージしようとせず、関連するセットアップステップを再実行してください。
+- 生成されたスタックにローカル Milvus が含まれている場合は、`docker compose -f docker-compose.final.yml up -d` を実行する前に `MINIO_ACCESS_KEY_ID` と `MINIO_SECRET_ACCESS_KEY` が利用可能であることを確認してください。
+- インタラクティブウィザード以外の Docker デプロイメントの詳細については、[DockerDeployment.md](/Users/ydh/mycode/ai/paper-RAG/docs/DockerDeployment.md) を参照してください。
 
-## Typical Command Sequences
+## 典型的なコマンドシーケンス
 
-### Remote models, local server
+### リモートモデル、ローカルサーバー
 
 ```bash
 make env-base
 lightrag-server
 ```
 
-### Remote LLM, local embedding and rerank in Docker
+### リモート LLM、Docker でのローカル埋め込みとリランク
 
 ```bash
 make env-base
 docker compose -f docker-compose.final.yml up -d
 ```
 
-### Add storage after the base setup
+### ベースセットアップ後にストレージを追加
 
 ```bash
 make env-base
@@ -287,7 +287,7 @@ make env-storage
 docker compose -f docker-compose.final.yml up -d
 ```
 
-### Add security and SSL before exposure
+### 公開前にセキュリティと SSL を追加
 
 ```bash
 make env-base

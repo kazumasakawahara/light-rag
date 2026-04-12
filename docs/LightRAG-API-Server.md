@@ -1,6 +1,6 @@
-# LightRAG Server and WebUI
+# LightRAG Server と WebUI
 
-The LightRAG Server is designed to provide a Web UI and API support. The Web UI facilitates document indexing, knowledge graph exploration, and a simple RAG query interface. LightRAG Server also provides an Ollama-compatible interface, aiming to emulate LightRAG as an Ollama chat model. This allows AI chat bots, such as Open WebUI, to access LightRAG easily.
+LightRAG Server は、Web UI と API サポートを提供するために設計されています。Web UI は、ドキュメントのインデックス作成、ナレッジグラフの探索、およびシンプルな RAG クエリインターフェースを提供します。LightRAG Server はまた、Ollama 互換インターフェースも提供しており、LightRAG を Ollama チャットモデルとしてエミュレートすることを目指しています。これにより、Open WebUI などの AI チャットボットが LightRAG に簡単にアクセスできるようになります。
 
 ![image-20250323122538997](./LightRAG-API-Server.assets/image-20250323122538997.png)
 
@@ -8,11 +8,11 @@ The LightRAG Server is designed to provide a Web UI and API support. The Web UI 
 
 ![image-20250323123011220](./LightRAG-API-Server.assets/image-20250323123011220.png)
 
-## Getting Started
+## はじめに
 
-### Installation
+### インストール
 
-* Install from PyPI
+* PyPI からのインストール
 
 ```bash
 ### Install LightRAG Server as tool using uv (recommended)
@@ -24,7 +24,7 @@ uv tool install "lightrag-hku[api]"
 # pip install "lightrag-hku[api]"
 ```
 
-* Installation from Source
+* ソースからのインストール
 
 ```bash
 # Clone the repository
@@ -60,22 +60,22 @@ bun run build
 cd ..
 ```
 
-### Before Starting LightRAG Server
+### LightRAG Server を起動する前に
 
-LightRAG necessitates the integration of both an LLM (Large Language Model) and an Embedding Model to effectively execute document indexing and querying operations. Prior to the initial deployment of the LightRAG server, it is essential to configure the settings for both the LLM and the Embedding Model. LightRAG supports binding to various LLM/Embedding backends:
+LightRAG は、ドキュメントのインデックス作成とクエリ操作を効果的に実行するために、LLM（大規模言語モデル）と Embedding モデルの両方の統合が必要です。LightRAG Server の初回デプロイ前に、LLM と Embedding モデルの両方の設定を構成することが不可欠です。LightRAG は、さまざまな LLM/Embedding バックエンドへのバインディングをサポートしています:
 
 * ollama
 * lollms
-* openai or openai compatible
+* openai または openai 互換
 * azure_openai
 * aws_bedrock
 * gemini
 
-It is recommended to use environment variables to configure the LightRAG Server. There is an example environment variable file named `env.example` in the root directory of the project. Please copy this file to the startup directory and rename it to `.env`. After that, you can modify the parameters related to the LLM and Embedding models in the `.env` file. It is important to note that the LightRAG Server will load the environment variables from `.env` into the system environment variables each time it starts. **LightRAG Server will prioritize the settings in the system environment variables to .env file**.
+LightRAG Server の設定には環境変数を使用することを推奨します。プロジェクトのルートディレクトリに `env.example` という名前のサンプル環境変数ファイルがあります。このファイルを起動ディレクトリにコピーし、`.env` にリネームしてください。その後、`.env` ファイル内の LLM と Embedding モデルに関連するパラメータを変更できます。LightRAG Server は起動のたびに `.env` から環境変数をシステム環境変数に読み込むことに注意してください。**LightRAG Server はシステム環境変数の設定を .env ファイルよりも優先します**。
 
-> Since VS Code with the Python extension may automatically load the .env file in the integrated terminal, please open a new terminal session after each modification to the .env file.
+> VS Code の Python 拡張機能が統合ターミナルで .env ファイルを自動的に読み込む場合があるため、.env ファイルを変更するたびに新しいターミナルセッションを開いてください。
 
-Here are some examples of common settings for LLM and Embedding models:
+以下は、LLM と Embedding モデルの一般的な設定例です:
 
 * OpenAI LLM + Ollama Embedding:
 
@@ -92,7 +92,7 @@ EMBEDDING_DIM=1024
 # EMBEDDING_BINDING_API_KEY=your_api_key
 ```
 
-> When targeting Google Gemini, set `LLM_BINDING=gemini`, choose a model such as `LLM_MODEL=gemini-flash-latest`, and provide your Gemini key via `LLM_BINDING_API_KEY` (or `GEMINI_API_KEY`).
+> Google Gemini を使用する場合は、`LLM_BINDING=gemini` を設定し、`LLM_MODEL=gemini-flash-latest` などのモデルを選択し、`LLM_BINDING_API_KEY`（または `GEMINI_API_KEY`）を通じて Gemini キーを提供してください。
 
 * Ollama LLM + Ollama Embedding:
 
@@ -111,11 +111,11 @@ EMBEDDING_DIM=1024
 # EMBEDDING_BINDING_API_KEY=your_api_key
 ```
 
-> **Important Note**: The Embedding model must be determined before document indexing, and the same model must be used during the document query phase. For certain storage solutions (e.g., PostgreSQL), the vector dimension must be defined upon initial table creation. Therefore, when changing embedding models, it is necessary to delete the existing vector-related tables and allow LightRAG to recreate them with the new dimensions.
+> **重要な注意事項**: Embedding モデルはドキュメントのインデックス作成前に決定する必要があり、ドキュメントのクエリフェーズでも同じモデルを使用する必要があります。特定のストレージソリューション（例: PostgreSQL）では、ベクトルの次元を初回テーブル作成時に定義する必要があります。そのため、Embedding モデルを変更する場合は、既存のベクトル関連テーブルを削除し、LightRAG に新しい次元で再作成させる必要があります。
 
-### Create .env File With Setup Tool
+### セットアップツールによる .env ファイルの作成
 
-Instead of editing `env.example` by hand, you can use the interactive setup wizard to generate a configured `.env` and, when needed, `docker-compose.final.yml`:
+`env.example` を手動で編集する代わりに、対話型セットアップウィザードを使用して、設定済みの `.env` と、必要に応じて `docker-compose.final.yml` を生成できます:
 
 ```bash
 make env-base           # Required first step: LLM, embedding, reranker
@@ -124,57 +124,56 @@ make env-server         # Optional: server port, auth, and SSL
 make env-security-check # Optional: audit the current .env for security risks
 ```
 
-For a full description of every target and what each flow does, see [docs/InteractiveSetup.md](./InteractiveSetup.md).
-The setup wizards update configuration only; run `make env-security-check` separately to audit the
-current `.env` for security risks before deployment.
+すべてのターゲットと各フローの詳細については、[docs/InteractiveSetup.md](./InteractiveSetup.md) を参照してください。
+セットアップウィザードは設定のみを更新します。デプロイ前に `make env-security-check` を別途実行して、現在の `.env` のセキュリティリスクを監査してください。
 
-### Starting LightRAG Server
+### LightRAG Server の起動
 
-The LightRAG Server supports two operational modes:
-* The simple and efficient Uvicorn mode:
+LightRAG Server は2つの動作モードをサポートしています:
+* シンプルで効率的な Uvicorn モード:
 
 ```
 lightrag-server
 ```
-* The multiprocess Gunicorn + Uvicorn mode (production mode, not supported on Windows environments):
+* マルチプロセスの Gunicorn + Uvicorn モード（本番モード、Windows 環境ではサポートされていません）:
 
 ```
 lightrag-gunicorn --workers 4
 ```
 
-When starting LightRAG, the current working directory must contain the `.env` configuration file. **It is intentionally designed that the `.env` file must be placed in the startup directory**. The purpose of this is to allow users to launch multiple LightRAG instances simultaneously and configure different `.env` files for different instances. **After modifying the `.env` file, you need to reopen the terminal for the new settings to take effect.** This is because each time LightRAG Server starts, it loads the environment variables from the `.env` file into the system environment variables, and system environment variables have higher precedence.
+LightRAG を起動する際、現在の作業ディレクトリに `.env` 設定ファイルが含まれている必要があります。**`.env` ファイルは意図的に起動ディレクトリに配置する設計になっています**。これは、ユーザーが複数の LightRAG インスタンスを同時に起動し、異なるインスタンスに対して異なる `.env` ファイルを設定できるようにするためです。**`.env` ファイルを変更した後、新しい設定を有効にするためにターミナルを再度開く必要があります。** これは、LightRAG Server が起動するたびに `.env` ファイルから環境変数をシステム環境変数に読み込み、システム環境変数の方が優先されるためです。
 
-During startup, configurations in the `.env` file can be overridden by command-line parameters. Common command-line parameters include:
+起動時に、`.env` ファイルの設定はコマンドラインパラメータで上書きできます。一般的なコマンドラインパラメータには以下があります:
 
-- `--host`: Server listening address (default: 0.0.0.0)
-- `--port`: Server listening port (default: 9621)
-- `--timeout`: LLM request timeout (default: 150 seconds)
-- `--log-level`: Log level (default: INFO)
-- `--working-dir`: Database persistence directory (default: ./rag_storage)
-- `--input-dir`: Directory for uploaded files (default: ./inputs)
-- `--workspace`: Workspace name, used to logically isolate data between multiple LightRAG instances (default: empty)
+- `--host`: サーバーのリッスンアドレス（デフォルト: 0.0.0.0）
+- `--port`: サーバーのリッスンポート（デフォルト: 9621）
+- `--timeout`: LLM リクエストのタイムアウト（デフォルト: 150秒）
+- `--log-level`: ログレベル（デフォルト: INFO）
+- `--working-dir`: データベースの永続化ディレクトリ（デフォルト: ./rag_storage）
+- `--input-dir`: アップロードファイルのディレクトリ（デフォルト: ./inputs）
+- `--workspace`: ワークスペース名、複数の LightRAG インスタンス間でデータを論理的に分離するために使用（デフォルト: 空）
 
-### Launching LightRAG Server with Docker
+### Docker による LightRAG Server の起動
 
-Using Docker Compose is the most convenient way to deploy and run the LightRAG Server.
+Docker Compose を使用するのが、LightRAG Server をデプロイおよび実行する最も便利な方法です。
 
-- Create a project directory.
-- Copy the `docker-compose.yml` file from the LightRAG repository into your project directory.
-- Prepare the `.env` file: Duplicate the sample file [`env.example`](https://ai.znipower.com:5013/c/env.example)to create a customized `.env` file, and configure the LLM and embedding parameters according to your specific requirements.
-- Start the LightRAG Server with the following command:
+- プロジェクトディレクトリを作成します。
+- LightRAG リポジトリから `docker-compose.yml` ファイルをプロジェクトディレクトリにコピーします。
+- `.env` ファイルを準備します: サンプルファイル [`env.example`](https://ai.znipower.com:5013/c/env.example) を複製してカスタマイズした `.env` ファイルを作成し、要件に応じて LLM と Embedding のパラメータを設定します。
+- 以下のコマンドで LightRAG Server を起動します:
 
 ```shell
 docker compose up
 # If you want the program to run in the background after startup, add the -d parameter at the end of the command.
 ```
 
-You can get the official docker compose file from here: [docker-compose.yml](https://raw.githubusercontent.com/HKUDS/LightRAG/refs/heads/main/docker-compose.yml). For historical versions of LightRAG docker images, visit this link: [LightRAG Docker Images](https://github.com/HKUDS/LightRAG/pkgs/container/lightrag). For more details about docker deployment, please refer to [DockerDeployment.md](./DockerDeployment.md).
+公式の Docker Compose ファイルはこちらから取得できます: [docker-compose.yml](https://raw.githubusercontent.com/HKUDS/LightRAG/refs/heads/main/docker-compose.yml)。LightRAG Docker イメージの過去のバージョンについては、こちらのリンクを参照してください: [LightRAG Docker Images](https://github.com/HKUDS/LightRAG/pkgs/container/lightrag)。Docker デプロイの詳細については、[DockerDeployment.md](./DockerDeployment.md) を参照してください。
 
-### Nginx Reverse Proxy Configuration
+### Nginx リバースプロキシの設定
 
-When using Nginx as a reverse proxy in front of LightRAG Server, you need to configure `client_max_body_size` for the `/documents/upload` endpoint to handle large file uploads. Without this configuration, Nginx will reject files larger than 1MB (the default limit) with a `413 Request Entity Too Large` error before the request reaches LightRAG.
+LightRAG Server の前段に Nginx をリバースプロキシとして使用する場合、大きなファイルのアップロードを処理するために `/documents/upload` エンドポイントの `client_max_body_size` を設定する必要があります。この設定がないと、Nginx はリクエストが LightRAG に到達する前に、1MB（デフォルトの制限）を超えるファイルを `413 Request Entity Too Large` エラーで拒否します。
 
-**Recommended Configuration:**
+**推奨設定:**
 
 ```nginx
 server {
@@ -224,26 +223,26 @@ server {
 }
 ```
 
-**Key Points:**
+**重要なポイント:**
 
-1. **Global Limit (8MB)**: Sufficient for LLM queries with long conversation history and context (128K tokens ≈ 512KB + JSON overhead).
-2. **Upload Endpoint (100MB)**: Must match or exceed `MAX_UPLOAD_SIZE` in your `.env` file. The default `MAX_UPLOAD_SIZE` is 100MB.
-3. **Streaming Endpoints**: Disable gzip compression (`gzip off`) for streaming endpoints to ensure real-time response delivery. LightRAG automatically sets `X-Accel-Buffering: no` header to disable response buffering.
-4. **Timeout Settings**: Large file uploads and LLM generation require longer timeouts; adjust `proxy_read_timeout` and `proxy_send_timeout` accordingly.
-5. **Size Validation Layers**:
-   - Nginx validates the `Content-Length` header first
-   - LightRAG performs streaming validation during upload
-   - Setting appropriate limits at both layers ensures better error messages and security
+1. **グローバル制限（8MB）**: 長い会話履歴とコンテキストを含む LLM クエリに十分です（128K トークン ≈ 512KB + JSON オーバーヘッド）。
+2. **アップロードエンドポイント（100MB）**: `.env` ファイルの `MAX_UPLOAD_SIZE` と同じかそれ以上に設定する必要があります。デフォルトの `MAX_UPLOAD_SIZE` は 100MB です。
+3. **ストリーミングエンドポイント**: リアルタイムのレスポンス配信を確保するために、ストリーミングエンドポイントでは gzip 圧縮を無効にします（`gzip off`）。LightRAG はレスポンスバッファリングを無効にするために `X-Accel-Buffering: no` ヘッダーを自動的に設定します。
+4. **タイムアウト設定**: 大きなファイルのアップロードと LLM の生成にはより長いタイムアウトが必要です。`proxy_read_timeout` と `proxy_send_timeout` を適宜調整してください。
+5. **サイズ検証レイヤー**:
+   - Nginx がまず `Content-Length` ヘッダーを検証します
+   - LightRAG がアップロード中にストリーミング検証を実行します
+   - 両方のレイヤーで適切な制限を設定することで、より良いエラーメッセージとセキュリティが確保されます
 
-### Offline Deployment
+### オフラインデプロイメント
 
-Official LightRAG Docker images are fully compatible with offline or air-gapped environments. If you want to build up you own  offline enviroment, please refer to [Offline Deployment Guide](./OfflineDeployment.md).
+公式の LightRAG Docker イメージは、オフラインまたはエアギャップ環境と完全に互換性があります。独自のオフライン環境を構築したい場合は、[オフラインデプロイメントガイド](./OfflineDeployment.md) を参照してください。
 
-### Starting Multiple LightRAG Instances
+### 複数の LightRAG インスタンスの起動
 
-There are two ways to start multiple LightRAG instances. The first way is to configure a completely independent working environment for each instance. This requires creating a separate working directory for each instance and placing a dedicated `.env` configuration file in that directory. The server listening ports in the configuration files of different instances cannot be the same. Then, you can start the service by running `lightrag-server` in the working directory.
+複数の LightRAG インスタンスを起動するには2つの方法があります。最初の方法は、各インスタンスに完全に独立した作業環境を設定することです。これには、各インスタンスに個別の作業ディレクトリを作成し、そのディレクトリに専用の `.env` 設定ファイルを配置する必要があります。異なるインスタンスの設定ファイルのサーバーリッスンポートは同じにすることはできません。その後、作業ディレクトリで `lightrag-server` を実行してサービスを起動できます。
 
-The second way is for all instances to share the same set of `.env` configuration files, and then use command-line arguments to specify different server listening ports and workspaces for each instance. You can start multiple LightRAG instances in the same working directory with different command-line arguments. For example:
+2番目の方法は、すべてのインスタンスが同じ `.env` 設定ファイルのセットを共有し、コマンドライン引数で各インスタンスに異なるサーバーリッスンポートとワークスペースを指定する方法です。同じ作業ディレクトリで異なるコマンドライン引数を使用して複数の LightRAG インスタンスを起動できます。例えば:
 
 ```
 # Start instance 1
@@ -253,30 +252,30 @@ lightrag-server --port 9621 --workspace space1
 lightrag-server --port 9622 --workspace space2
 ```
 
-The purpose of a workspace is to achieve data isolation between different instances. Therefore, the `workspace` parameter must be different for different instances; otherwise, it will lead to data confusion and corruption.
+ワークスペースの目的は、異なるインスタンス間のデータ分離を実現することです。そのため、`workspace` パラメータは異なるインスタンスで異なる値にする必要があります。そうしないと、データの混乱や破損につながります。
 
-When launching multiple LightRAG instances via Docker Compose, simply specify unique `WORKSPACE` and `PORT` environment variables for each container within your `docker-compose.yml`. Even if all instances share a common `.env` file, the container-specific environment variables defined in Compose will take precedence, ensuring independent configurations for each instance.
+Docker Compose を使用して複数の LightRAG インスタンスを起動する場合は、`docker-compose.yml` 内の各コンテナに一意の `WORKSPACE` と `PORT` 環境変数を指定するだけです。すべてのインスタンスが共通の `.env` ファイルを共有していても、Compose で定義されたコンテナ固有の環境変数が優先され、各インスタンスの独立した設定が保証されます。
 
-### Data Isolation Between LightRAG Instances
+### LightRAG インスタンス間のデータ分離
 
-Configuring an independent working directory and a dedicated `.env` configuration file for each instance can generally ensure that locally persisted files in the in-memory database are saved in their respective working directories, achieving data isolation. By default, LightRAG uses all in-memory databases, and this method of data isolation is sufficient. However, if you are using an external database, and different instances access the same database instance, you need to use workspaces to achieve data isolation; otherwise, the data of different instances will conflict and be destroyed.
+各インスタンスに独立した作業ディレクトリと専用の `.env` 設定ファイルを構成することで、一般的にインメモリデータベースのローカル永続化ファイルがそれぞれの作業ディレクトリに保存され、データ分離が実現できます。デフォルトでは、LightRAG はすべてインメモリデータベースを使用しており、この方法のデータ分離で十分です。ただし、外部データベースを使用しており、異なるインスタンスが同じデータベースインスタンスにアクセスする場合は、ワークスペースを使用してデータ分離を実現する必要があります。そうしないと、異なるインスタンスのデータが競合し破壊されます。
 
-The command-line `workspace` argument and the `WORKSPACE` environment variable in the `.env` file can both be used to specify the workspace name for the current instance, with the command-line argument having higher priority. Here is how workspaces are implemented for different types of storage:
+コマンドラインの `workspace` 引数と `.env` ファイルの `WORKSPACE` 環境変数の両方を使用して、現在のインスタンスのワークスペース名を指定できます（コマンドライン引数の方が優先度が高いです）。以下は、異なるタイプのストレージにおけるワークスペースの実装方法です:
 
-- **For local file-based databases, data isolation is achieved through workspace subdirectories:** `JsonKVStorage`, `JsonDocStatusStorage`, `NetworkXStorage`, `NanoVectorDBStorage`, `FaissVectorDBStorage`.
-- **For databases that store data in collections, it's done by adding a workspace prefix to the collection name:** `RedisKVStorage`, `RedisDocStatusStorage`, `MilvusVectorDBStorage`, `MongoKVStorage`, `MongoDocStatusStorage`, `MongoVectorDBStorage`, `MongoGraphStorage`, `PGGraphStorage`.
-- **For Qdrant vector database, data isolation is achieved through payload-based partitioning (Qdrant's recommended multitenancy approach):** `QdrantVectorDBStorage` uses shared collections with payload filtering for unlimited workspace scalability.
-- **For relational databases, data isolation is achieved by adding a `workspace` field to the tables for logical data separation:** `PGKVStorage`, `PGVectorStorage`, `PGDocStatusStorage`.
-- **For graph databases, logical data isolation is achieved through labels:** `Neo4JStorage`, `MemgraphStorage`
-- **For OpenSearch, data isolation is achieved through index name prefixes:** `OpenSearchKVStorage`, `OpenSearchDocStatusStorage`, `OpenSearchGraphStorage`, `OpenSearchVectorDBStorage`
+- **ローカルファイルベースのデータベースでは、ワークスペースサブディレクトリによってデータ分離を実現:** `JsonKVStorage`、`JsonDocStatusStorage`、`NetworkXStorage`、`NanoVectorDBStorage`、`FaissVectorDBStorage`。
+- **コレクションにデータを保存するデータベースでは、コレクション名にワークスペースプレフィックスを追加:** `RedisKVStorage`、`RedisDocStatusStorage`、`MilvusVectorDBStorage`、`MongoKVStorage`、`MongoDocStatusStorage`、`MongoVectorDBStorage`、`MongoGraphStorage`、`PGGraphStorage`。
+- **Qdrant ベクトルデータベースでは、ペイロードベースのパーティショニング（Qdrant 推奨のマルチテナンシーアプローチ）によってデータ分離を実現:** `QdrantVectorDBStorage` は、無制限のワークスペーススケーラビリティのために、ペイロードフィルタリングを備えた共有コレクションを使用します。
+- **リレーショナルデータベースでは、テーブルに `workspace` フィールドを追加して論理的なデータ分離を実現:** `PGKVStorage`、`PGVectorStorage`、`PGDocStatusStorage`。
+- **グラフデータベースでは、ラベルによって論理的なデータ分離を実現:** `Neo4JStorage`、`MemgraphStorage`
+- **OpenSearch では、インデックス名のプレフィックスによってデータ分離を実現:** `OpenSearchKVStorage`、`OpenSearchDocStatusStorage`、`OpenSearchGraphStorage`、`OpenSearchVectorDBStorage`
 
-To maintain compatibility with legacy data, the default workspace for PostgreSQL is `default` and for Neo4j is `base` when no workspace is configured. For all external storages, the system provides dedicated workspace environment variables to override the common `WORKSPACE` environment variable configuration. These storage-specific workspace environment variables are: `REDIS_WORKSPACE`, `MILVUS_WORKSPACE`, `QDRANT_WORKSPACE`, `MONGODB_WORKSPACE`, `POSTGRES_WORKSPACE`, `NEO4J_WORKSPACE`, `MEMGRAPH_WORKSPACE`, `OPENSEARCH_WORKSPACE`.
+レガシーデータとの互換性を維持するため、ワークスペースが設定されていない場合、PostgreSQL のデフォルトワークスペースは `default`、Neo4j のデフォルトワークスペースは `base` です。すべての外部ストレージに対して、システムは共通の `WORKSPACE` 環境変数設定を上書きするための専用ワークスペース環境変数を提供しています。これらのストレージ固有のワークスペース環境変数は: `REDIS_WORKSPACE`、`MILVUS_WORKSPACE`、`QDRANT_WORKSPACE`、`MONGODB_WORKSPACE`、`POSTGRES_WORKSPACE`、`NEO4J_WORKSPACE`、`MEMGRAPH_WORKSPACE`、`OPENSEARCH_WORKSPACE` です。
 
-### Multiple workers for Gunicorn + Uvicorn
+### Gunicorn + Uvicorn の複数ワーカー
 
-The LightRAG Server can operate in the `Gunicorn + Uvicorn` preload mode. Gunicorn's multiple worker (multiprocess) capability prevents document indexing tasks from blocking RAG queries. Using CPU-exhaustive document extraction tools, such as docling, can lead to the entire system being blocked in pure Uvicorn mode.
+LightRAG Server は `Gunicorn + Uvicorn` プリロードモードで動作できます。Gunicorn の複数ワーカー（マルチプロセス）機能により、ドキュメントのインデックスタスクが RAG クエリをブロックすることを防ぎます。docling のような CPU 集約型のドキュメント抽出ツールを使用すると、純粋な Uvicorn モードではシステム全体がブロックされる可能性があります。
 
-Though LightRAG Server uses one worker to process the document indexing pipeline, with the async task support of Uvicorn, multiple files can be processed in parallel. The bottleneck of document indexing speed mainly lies with the LLM. If your LLM supports high concurrency, you can accelerate document indexing by increasing the concurrency level of the LLM. Below are several environment variables related to concurrent processing, along with their default values:
+LightRAG Server はドキュメントインデックスパイプラインの処理に1つのワーカーを使用しますが、Uvicorn の非同期タスクサポートにより、複数のファイルを並列で処理できます。ドキュメントインデックスの速度のボトルネックは主に LLM にあります。LLM が高い同時実行をサポートしている場合、LLM の同時実行レベルを上げることでドキュメントのインデックスを高速化できます。以下は、並行処理に関連するいくつかの環境変数とそのデフォルト値です:
 
 ```
 ### Number of worker processes, not greater than (2 x number_of_cores) + 1
@@ -287,9 +286,9 @@ MAX_PARALLEL_INSERT=2
 MAX_ASYNC=4
 ```
 
-### Install LightRAG as a Linux Service
+### LightRAG を Linux サービスとしてインストール
 
-Create your service file `lightrag.service` from the sample file: `lightrag.service.example`. Modify the start options the service file:
+サンプルファイル `lightrag.service.example` からサービスファイル `lightrag.service` を作成します。サービスファイルの起動オプションを変更します:
 
 ```text
 # Set Enviroment to your Python virtual enviroment
@@ -299,9 +298,9 @@ WorkingDirectory=/home/netman/lightrag-xyj
 ExecStart=/home/netman/lightrag-xyj/venv/bin/lightrag-gunicorn
 ```
 
-> The ExecStart command must be either `lightrag-gunicorn` or `lightrag-server`; no wrapper scripts are allowed. This is because service termination requires the main process to be one of these two executables.
+> ExecStart コマンドは `lightrag-gunicorn` または `lightrag-server` のいずれかでなければなりません。ラッパースクリプトは使用できません。これは、サービスの終了時にメインプロセスがこれら2つの実行可能ファイルのいずれかである必要があるためです。
 
-Install LightRAG service. If your system is Ubuntu, the following commands will work:
+LightRAG サービスをインストールします。システムが Ubuntu の場合、以下のコマンドが動作します:
 
 ```shell
 sudo cp lightrag.service /etc/systemd/system/
@@ -311,23 +310,23 @@ sudo systemctl status lightrag.service
 sudo systemctl enable lightrag.service
 ```
 
-## Ollama Emulation
+## Ollama エミュレーション
 
-We provide Ollama-compatible interfaces for LightRAG, aiming to emulate LightRAG as an Ollama chat model. This allows AI chat frontends supporting Ollama, such as Open WebUI, to access LightRAG easily.
+LightRAG 向けに Ollama 互換インターフェースを提供しており、LightRAG を Ollama チャットモデルとしてエミュレートすることを目指しています。これにより、Open WebUI のような Ollama をサポートする AI チャットフロントエンドが LightRAG に簡単にアクセスできるようになります。
 
-### Connect Open WebUI to LightRAG
+### Open WebUI から LightRAG への接続
 
-After starting the lightrag-server, you can add an Ollama-type connection in the Open WebUI admin panel. And then a model named `lightrag:latest` will appear in Open WebUI's model management interface. Users can then send queries to LightRAG through the chat interface. You should install LightRAG as a service for this use case.
+lightrag-server を起動した後、Open WebUI の管理パネルで Ollama タイプの接続を追加できます。すると、`lightrag:latest` という名前のモデルが Open WebUI のモデル管理インターフェースに表示されます。ユーザーはチャットインターフェースを通じて LightRAG にクエリを送信できます。このユースケースでは、LightRAG をサービスとしてインストールすることを推奨します。
 
-Open WebUI uses an LLM to do the session title and session keyword generation task. So the Ollama chat completion API detects and forwards OpenWebUI session-related requests directly to the underlying LLM. Screenshot from Open WebUI:
+Open WebUI は LLM を使用してセッションタイトルとセッションキーワードの生成タスクを行います。そのため、Ollama チャット補完 API は Open WebUI のセッション関連リクエストを検出し、基盤となる LLM に直接転送します。Open WebUI のスクリーンショット:
 
 ![image-20250323194750379](./LightRAG-API-Server.assets/image-20250323194750379.png)
 
-### Choose Query mode in chat
+### チャットでのクエリモードの選択
 
-The default query mode is `hybrid` if you send a message (query) from the Ollama interface of LightRAG. You can select query mode by sending a message with a query prefix.
+LightRAG の Ollama インターフェースからメッセージ（クエリ）を送信する場合、デフォルトのクエリモードは `hybrid` です。クエリプレフィックス付きのメッセージを送信することで、クエリモードを選択できます。
 
-A query prefix in the query string can determine which LightRAG query mode is used to generate the response for the query. The supported prefixes include:
+クエリ文字列内のクエリプレフィックスにより、レスポンスの生成に使用される LightRAG のクエリモードが決定されます。サポートされているプレフィックスは以下の通りです:
 
 ```
 /local
@@ -345,35 +344,35 @@ A query prefix in the query string can determine which LightRAG query mode is us
 /mixcontext
 ```
 
-For example, the chat message `/mix What's LightRAG?` will trigger a mix mode query for LightRAG. A chat message without a query prefix will trigger a hybrid mode query by default.
+例えば、チャットメッセージ `/mix What's LightRAG?` は LightRAG の mix モードクエリをトリガーします。クエリプレフィックスのないチャットメッセージは、デフォルトで hybrid モードクエリをトリガーします。
 
-`/bypass` is not a LightRAG query mode; it will tell the API Server to pass the query directly to the underlying LLM, including the chat history. So the user can use the LLM to answer questions based on the chat history. If you are using Open WebUI as a front end, you can just switch the model to a normal LLM instead of using the `/bypass` prefix.
+`/bypass` は LightRAG のクエリモードではありません。これは API Server にクエリをチャット履歴を含めて基盤の LLM に直接渡すように指示します。そのため、ユーザーはチャット履歴に基づいて LLM に質問に回答させることができます。Open WebUI をフロントエンドとして使用している場合は、`/bypass` プレフィックスを使用する代わりに、モデルを通常の LLM に切り替えるだけで済みます。
 
-`/context` is also not a LightRAG query mode; it will tell LightRAG to return only the context information prepared for the LLM. You can check the context if it's what you want, or process the context by yourself.
+`/context` も LightRAG のクエリモードではありません。これは LightRAG に LLM 用に準備されたコンテキスト情報のみを返すように指示します。コンテキストが期待通りかどうかを確認したり、コンテキストを自分で処理したりできます。
 
-### Add user prompt in chat
+### チャットでのユーザープロンプトの追加
 
-When using LightRAG for content queries, avoid combining the search process with unrelated output processing, as this significantly impacts query effectiveness. User prompt is specifically designed to address this issue — it does not participate in the RAG retrieval phase, but rather guides the LLM on how to process the retrieved results after the query is completed. We can append square brackets to the query prefix to provide the LLM with the user prompt:
+LightRAG をコンテンツクエリに使用する場合、検索プロセスと無関係な出力処理を組み合わせることは避けてください。これはクエリの有効性に大きく影響します。ユーザープロンプトはこの問題に対処するために特別に設計されています — RAG の検索フェーズには参加せず、クエリ完了後に取得された結果をどのように処理するかを LLM に指示します。クエリプレフィックスに角括弧を追加して、LLM にユーザープロンプトを提供できます:
 
 ```
 /[Use mermaid format for diagrams] Please draw a character relationship diagram for Scrooge
 /mix[Use mermaid format for diagrams] Please draw a character relationship diagram for Scrooge
 ```
 
-## API Key and Authentication
+## API キーと認証
 
-By default, the LightRAG Server can be accessed without any authentication. We can configure the server with an API Key or account credentials to secure it.
+デフォルトでは、LightRAG Server は認証なしでアクセスできます。API キーまたはアカウント資格情報を設定してサーバーを保護できます。
 
-* API Key:
+* API キー:
 
 ```
 LIGHTRAG_API_KEY=your-secure-api-key-here
 WHITELIST_PATHS=/health,/api/*
 ```
 
-> Health check and Ollama emulation endpoints are excluded from API Key check by default. For security reasons, remove `/api/*` from `WHITELIST_PATHS` if the Ollama service is not required.
+> ヘルスチェックと Ollama エミュレーションのエンドポイントは、デフォルトで API キーチェックから除外されています。セキュリティ上の理由から、Ollama サービスが不要な場合は `WHITELIST_PATHS` から `/api/*` を削除してください。
 
-The API key is passed using the request header `X-API-Key`. Below is an example of accessing the LightRAG Server via API:
+API キーはリクエストヘッダー `X-API-Key` を使用して渡されます。以下は API 経由で LightRAG Server にアクセスする例です:
 
 ```
 curl -X 'POST' \
@@ -383,9 +382,9 @@ curl -X 'POST' \
   -d ''
 ```
 
-* Account credentials (the Web UI requires login before access can be granted):
+* アカウント資格情報（Web UI ではアクセスが許可される前にログインが必要です）:
 
-LightRAG API Server implements JWT-based authentication using the HS256 algorithm. To enable secure access control, the following environment variables are required:
+LightRAG API Server は HS256 アルゴリズムを使用した JWT ベースの認証を実装しています。安全なアクセス制御を有効にするには、以下の環境変数が必要です:
 
 ```bash
 # For jwt auth
@@ -394,21 +393,21 @@ TOKEN_SECRET='your-key'
 TOKEN_EXPIRE_HOURS=4
 ```
 
-Passwords without a prefix are treated as plaintext. To store a bcrypt password, prefix the generated hash with `{bcrypt}`. The easiest way to generate a value that can be pasted directly into `AUTH_ACCOUNTS` is:
+プレフィックスのないパスワードはプレーンテキストとして扱われます。bcrypt パスワードを保存するには、生成されたハッシュの前に `{bcrypt}` を付けます。`AUTH_ACCOUNTS` に直接貼り付けられる値を生成する最も簡単な方法は:
 
 ```bash
 lightrag-hash-password --username admin
 ```
 
-The command prompts for the password and prints an `admin:{bcrypt}...` entry ready to paste into `.env`.
+このコマンドはパスワードの入力を求め、`.env` に貼り付け可能な `admin:{bcrypt}...` エントリを出力します。
 
-> Currently, only the configuration of an administrator account and password is supported. A comprehensive account system is yet to be developed and implemented.
+> 現在、管理者アカウントとパスワードの設定のみがサポートされています。包括的なアカウントシステムは今後開発・実装される予定です。
 
-If Account credentials are not configured, the Web UI will access the system as a Guest. Therefore, even if only an API Key is configured, all APIs can still be accessed through the Guest account, which remains insecure. Hence, to safeguard the API, it is necessary to configure both authentication methods simultaneously.
+アカウント資格情報が設定されていない場合、Web UI はゲストとしてシステムにアクセスします。したがって、API キーのみが設定されている場合でも、すべての API はゲストアカウントを通じてアクセスでき、これは安全ではありません。そのため、API を保護するには、両方の認証方法を同時に設定する必要があります。
 
-## For Azure OpenAI Backend
+## Azure OpenAI バックエンドの場合
 
-Azure OpenAI API can be created using the following commands in Azure CLI (you need to install Azure CLI first from [https://docs.microsoft.com/en-us/cli/azure/install-azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)):
+Azure OpenAI API は、Azure CLI で以下のコマンドを使用して作成できます（最初に [https://docs.microsoft.com/en-us/cli/azure/install-azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) から Azure CLI をインストールする必要があります）:
 
 ```bash
 # Change the resource group name, location, and OpenAI resource name as needed
@@ -426,7 +425,7 @@ az cognitiveservices account keys list --name $RESOURCE_NAME -g $RESOURCE_GROUP_
 
 ```
 
-The output of the last command will give you the endpoint and the key for the OpenAI API. You can use these values to set the environment variables in the `.env` file.
+最後のコマンドの出力で、OpenAI API のエンドポイントとキーが取得できます。これらの値を使用して `.env` ファイルの環境変数を設定できます。
 
 ```
 # Azure OpenAI Configuration in .env:
@@ -442,37 +441,37 @@ EMBEDDING_BINDING=azure_openai
 EMBEDDING_MODEL=your-embedding-deployment-name
 ```
 
-## LightRAG Server Configuration in Detail
+## LightRAG Server の詳細設定
 
-The API Server can be configured in two ways (highest priority first):
+API Server は2つの方法で設定できます（優先度の高い順）:
 
-* Command line arguments
-* Environment variables or .env file
+* コマンドライン引数
+* 環境変数または .env ファイル
 
-Most of the configurations come with default settings; check out the details in the sample file: `.env.example`. Storage configuration should also be set through environment variables or the `.env` file.
+ほとんどの設定にはデフォルト値があります。詳細はサンプルファイル `.env.example` を確認してください。ストレージの設定も環境変数または `.env` ファイルを通じて行う必要があります。
 
-### LLM and Embedding Backend Supported
+### サポートされている LLM と Embedding バックエンド
 
-LightRAG supports binding to various LLM/Embedding backends:
+LightRAG はさまざまな LLM/Embedding バックエンドへのバインディングをサポートしています:
 
 * ollama
-* openai (including openai compatible)
+* openai（openai 互換を含む）
 * azure_openai
 * lollms
 * aws_bedrock
 
-Use environment variables `LLM_BINDING` or CLI argument `--llm-binding` to select the LLM backend type. Use environment variables `EMBEDDING_BINDING` or CLI argument `--embedding-binding` to select the Embedding backend type.
+環境変数 `LLM_BINDING` または CLI 引数 `--llm-binding` を使用して LLM バックエンドタイプを選択します。環境変数 `EMBEDDING_BINDING` または CLI 引数 `--embedding-binding` を使用して Embedding バックエンドタイプを選択します。
 
-For LLM and embedding configuration examples, please refer to the `env.example` file in the project's root directory. To view the complete list of configurable options for OpenAI and Ollama-compatible LLM interfaces, use the following commands:
+LLM と Embedding の設定例については、プロジェクトのルートディレクトリにある `env.example` ファイルを参照してください。OpenAI および Ollama 互換の LLM インターフェースの設定可能なオプションの完全なリストを表示するには、以下のコマンドを使用してください:
 ```
 lightrag-server --llm-binding openai --help
 lightrag-server --llm-binding ollama --help
 lightrag-server --embedding-binding ollama --help
 ```
 
-> Please use OpenAI-compatible method to access LLMs deployed by OpenRouter or vLLM/SGLang. You can pass additional parameters to OpenRouter or vLLM/SGLang through the `OPENAI_LLM_EXTRA_BODY` environment variable to disable reasoning mode or achieve other personalized controls.
+> OpenRouter や vLLM/SGLang でデプロイされた LLM にアクセスするには、OpenAI 互換メソッドを使用してください。`OPENAI_LLM_EXTRA_BODY` 環境変数を通じて OpenRouter や vLLM/SGLang に追加パラメータを渡すことで、推論モードの無効化やその他のパーソナライズされた制御を実現できます。
 
-Set the max_tokens to **prevent excessively long or endless output loop** during the entity relationship extraction phase for Large Language Model (LLM) responses.  The purpose of setting max_tokens parameter is to truncate LLM output before timeouts occur, thereby preventing document extraction failures. This addresses issues where certain text blocks (e.g., tables or citations) containing numerous entities and relationships can lead to overly long or even endless loop outputs from LLMs. This setting is particularly crucial for locally deployed, smaller-parameter models. Max tokens value can be calculated by this formula: `LLM_TIMEOUT * llm_output_tokens/second` (i.e. `180s * 50 tokens/s = 9000`)
+大規模言語モデル（LLM）のレスポンスにおけるエンティティ関係抽出フェーズでの**過度に長いまたは無限の出力ループを防止する**ために max_tokens を設定してください。max_tokens パラメータを設定する目的は、タイムアウトが発生する前に LLM の出力を切り詰め、ドキュメント抽出の失敗を防ぐことです。これは、多数のエンティティと関係を含む特定のテキストブロック（例: テーブルや引用）が LLM の過度に長いまたは無限ループの出力を引き起こす可能性がある問題に対処します。この設定は、ローカルにデプロイされた小規模パラメータモデルにとって特に重要です。max tokens の値は次の式で計算できます: `LLM_TIMEOUT * llm_output_tokens/second`（例: `180s * 50 tokens/s = 9000`）
 
 ```
 # For vLLM/SGLang doployed models, or most of OpenAI compatible API provider
@@ -485,26 +484,26 @@ OLLAMA_LLM_NUM_PREDICT=9000
 OPENAI_LLM_MAX_COMPLETION_TOKENS=9000
 ```
 
-### Entity Extraction Configuration
+### エンティティ抽出の設定
 
-* ENABLE_LLM_CACHE_FOR_EXTRACT: Enable LLM cache for entity extraction (default: true)
+* ENABLE_LLM_CACHE_FOR_EXTRACT: エンティティ抽出の LLM キャッシュを有効にする（デフォルト: true）
 
-It's very common to set `ENABLE_LLM_CACHE_FOR_EXTRACT` to true for a test environment to reduce the cost of LLM calls.
+テスト環境では LLM 呼び出しのコストを削減するために `ENABLE_LLM_CACHE_FOR_EXTRACT` を true に設定することが非常に一般的です。
 
-### Storage Types Supported
+### サポートされているストレージタイプ
 
-LightRAG uses 4 types of storage for different purposes:
+LightRAG はさまざまな目的で4種類のストレージを使用しています:
 
-* KV_STORAGE: llm response cache, text chunks, document information
-* VECTOR_STORAGE: entities vectors, relation vectors, chunks vectors
-* GRAPH_STORAGE: entity relation graph
-* DOC_STATUS_STORAGE: document indexing status
+* KV_STORAGE: LLM レスポンスキャッシュ、テキストチャンク、ドキュメント情報
+* VECTOR_STORAGE: エンティティベクトル、関係ベクトル、チャンクベクトル
+* GRAPH_STORAGE: エンティティ関係グラフ
+* DOC_STATUS_STORAGE: ドキュメントのインデックスステータス
 
-LightRAG Server offers various storage implementations, with the default being an in-memory database that persists data to the WORKING_DIR directory. Additionally, LightRAG supports a wide range of storage solutions including PostgreSQL, MongoDB, FAISS, Milvus, Qdrant, Neo4j, Memgraph, and Redis. For detailed information on supported storage options, please refer to the storage section in the README.md file located in the root directory.
+LightRAG Server はさまざまなストレージ実装を提供しており、デフォルトは WORKING_DIR ディレクトリにデータを永続化するインメモリデータベースです。さらに、LightRAG は PostgreSQL、MongoDB、FAISS、Milvus、Qdrant、Neo4j、Memgraph、Redis を含む幅広いストレージソリューションをサポートしています。サポートされているストレージオプションの詳細については、ルートディレクトリの README.md ファイルのストレージセクションを参照してください。
 
-**Milvus Index Configuration:** LightRAG now supports configurable index types for Milvus vector storage (AUTOINDEX, HNSW, HNSW_SQ, IVF_FLAT, etc.) through environment variables. HNSW_SQ requires Milvus 2.6.8+ and provides significant memory savings. See the "Using Milvus for Vector Storage" section in the main README.md for complete configuration options.
+**Milvus インデックス設定:** LightRAG は、環境変数を通じて Milvus ベクトルストレージの設定可能なインデックスタイプ（AUTOINDEX、HNSW、HNSW_SQ、IVF_FLAT など）をサポートするようになりました。HNSW_SQ は Milvus 2.6.8+ が必要で、大幅なメモリ節約を実現します。完全な設定オプションについては、メインの README.md の「Using Milvus for Vector Storage」セクションを参照してください。
 
-You can select the storage implementation by configuring environment variables. For instance, prior to the initial launch of the API server, you can set the following environment variable to specify your desired storage implementation:
+環境変数を設定することで、ストレージ実装を選択できます。例えば、API サーバーの初回起動前に、以下の環境変数を設定して希望のストレージ実装を指定できます:
 
 ```
 LIGHTRAG_KV_STORAGE=PGKVStorage
@@ -513,39 +512,39 @@ LIGHTRAG_GRAPH_STORAGE=PGGraphStorage
 LIGHTRAG_DOC_STATUS_STORAGE=PGDocStatusStorage
 ```
 
-You cannot change storage implementation selection after adding documents to LightRAG. Data migration from one storage implementation to another is not supported yet. For further information, please read the sample `.env.example` file.
+LightRAG にドキュメントを追加した後にストレージ実装の選択を変更することはできません。あるストレージ実装から別のストレージ実装へのデータ移行はまだサポートされていません。詳細については、サンプルの `.env.example` ファイルを参照してください。
 
-### LLM Cache Migration Between Storage Types
+### ストレージタイプ間の LLM キャッシュ移行
 
-When switching the storage implementation in LightRAG, the LLM cache can be migrated from the existing storage to the new one. Subsequently, when re-uploading files to the new storage, the pre-existing LLM cache will significantly accelerate file processing. For detailed instructions on using the LLM cache migration tool, please refer to [README_MIGRATE_LLM_CACHE.md](../lightrag/tools/README_MIGRATE_LLM_CACHE.md)
+LightRAG のストレージ実装を切り替える際、LLM キャッシュを既存のストレージから新しいストレージに移行できます。その後、新しいストレージにファイルを再アップロードする際、既存の LLM キャッシュがファイル処理を大幅に高速化します。LLM キャッシュ移行ツールの使用方法の詳細については、[README_MIGRATE_LLM_CACHE.md](../lightrag/tools/README_MIGRATE_LLM_CACHE.md) を参照してください。
 
-### LightRAG API Server Command Line Options
+### LightRAG API Server のコマンドラインオプション
 
-| Parameter             | Default       | Description                                                                                                                     |
+| パラメータ             | デフォルト     | 説明                                                                                                                     |
 | --------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| --host                | 0.0.0.0       | Server host                                                                                                                     |
-| --port                | 9621          | Server port                                                                                                                     |
-| --working-dir         | ./rag_storage | Working directory for RAG storage                                                                                               |
-| --input-dir           | ./inputs      | Directory containing input documents                                                                                            |
-| --max-async           | 4             | Maximum number of async operations                                                                                              |
-| --log-level           | INFO          | Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)                                                                           |
-| --verbose             | -             | Verbose debug output (True, False)                                                                                              |
-| --key                 | None          | API key for authentication. Protects the LightRAG server against unauthorized access                                            |
-| --ssl                 | False         | Enable HTTPS                                                                                                                    |
-| --ssl-certfile        | None          | Path to SSL certificate file (required if --ssl is enabled)                                                                     |
-| --ssl-keyfile         | None          | Path to SSL private key file (required if --ssl is enabled)                                                                     |
-| --llm-binding         | ollama        | LLM binding type (lollms, ollama, openai, openai-ollama, azure_openai, aws_bedrock)                                                          |
-| --embedding-binding   | ollama        | Embedding binding type (lollms, ollama, openai, azure_openai, aws_bedrock)                                                                   |
+| --host                | 0.0.0.0       | サーバーホスト                                                                                                                     |
+| --port                | 9621          | サーバーポート                                                                                                                     |
+| --working-dir         | ./rag_storage | RAG ストレージの作業ディレクトリ                                                                                               |
+| --input-dir           | ./inputs      | 入力ドキュメントを含むディレクトリ                                                                            |
+| --max-async           | 4             | 非同期操作の最大数                                                                                              |
+| --log-level           | INFO          | ログレベル（DEBUG、INFO、WARNING、ERROR、CRITICAL）                                                                           |
+| --verbose             | -             | 詳細なデバッグ出力（True、False）                                                                                              |
+| --key                 | None          | 認証用 API キー。LightRAG サーバーを不正アクセスから保護します                                            |
+| --ssl                 | False         | HTTPS を有効にする                                                                                                                    |
+| --ssl-certfile        | None          | SSL 証明書ファイルのパス（--ssl が有効な場合に必要）                                                                     |
+| --ssl-keyfile         | None          | SSL 秘密鍵ファイルのパス（--ssl が有効な場合に必要）                                                                     |
+| --llm-binding         | ollama        | LLM バインディングタイプ（lollms、ollama、openai、openai-ollama、azure_openai、aws_bedrock）                                                          |
+| --embedding-binding   | ollama        | Embedding バインディングタイプ（lollms、ollama、openai、azure_openai、aws_bedrock）                                                                   |
 
-### Reranking Configuration
+### リランキング設定
 
-Reranking query-recalled chunks can significantly enhance retrieval quality by re-ordering documents based on an optimized relevance scoring model. LightRAG currently supports the following rerank providers:
+クエリで呼び出されたチャンクのリランキングにより、最適化された関連性スコアリングモデルに基づいてドキュメントを再順序付けすることで、検索品質を大幅に向上させることができます。LightRAG は現在、以下のリランクプロバイダーをサポートしています:
 
-- **Cohere / vLLM**: Offers full API integration with Cohere AI's `v2/rerank` endpoint. As vLLM provides a Cohere-compatible reranker API, all reranker models deployed via vLLM are also supported.
-- **Jina AI**: Provides complete implementation compatibility with all Jina rerank models.
-- **Aliyun**: Features a custom implementation designed to support Aliyun's rerank API format.
+- **Cohere / vLLM**: Cohere AI の `v2/rerank` エンドポイントとの完全な API 統合を提供します。vLLM は Cohere 互換のリランカー API を提供しているため、vLLM 経由でデプロイされたすべてのリランカーモデルもサポートされます。
+- **Jina AI**: すべての Jina リランクモデルとの完全な実装互換性を提供します。
+- **Aliyun**: Aliyun のリランク API フォーマットをサポートするように設計されたカスタム実装を提供します。
 
-The rerank provider is configured via the `.env` file. Below is an example configuration for a rerank model deployed locally using vLLM:
+リランクプロバイダーは `.env` ファイルで設定します。以下は、vLLM を使用してローカルにデプロイされたリランクモデルの設定例です:
 
 ```
 RERANK_BINDING=cohere
@@ -554,7 +553,7 @@ RERANK_BINDING_HOST=http://localhost:8000/rerank
 RERANK_BINDING_API_KEY=your_rerank_api_key_here
 ```
 
-Here is an example configuration for utilizing the Reranker service provided by Aliyun:
+以下は、Aliyun が提供する Reranker サービスを利用するための設定例です:
 
 ```
 RERANK_BINDING=aliyun
@@ -563,32 +562,32 @@ RERANK_BINDING_HOST=https://dashscope.aliyuncs.com/api/v1/services/rerank/text-r
 RERANK_BINDING_API_KEY=your_rerank_api_key_here
 ```
 
-For comprehensive reranker configuration examples, please refer to the `env.example` file.
+包括的なリランカー設定例については、`env.example` ファイルを参照してください。
 
-### Enable Reranking
+### リランキングの有効化
 
-Reranking can be enabled or disabled on a per-query basis.
+リランキングはクエリごとに有効または無効にできます。
 
-The `/query` and `/query/stream` API endpoints include an `enable_rerank` parameter, which is set to `true` by default, controlling whether reranking is active for the current query. To change the default value of the `enable_rerank` parameter to `false`, set the following environment variable:
+`/query` および `/query/stream` API エンドポイントには `enable_rerank` パラメータがあり、デフォルトでは `true` に設定されており、現在のクエリでリランキングが有効かどうかを制御します。`enable_rerank` パラメータのデフォルト値を `false` に変更するには、以下の環境変数を設定してください:
 
 ```
 RERANK_BY_DEFAULT=False
 ```
 
-### Include Chunk Content in References
+### リファレンスにチャンクコンテンツを含める
 
-By default, the `/query` and `/query/stream` endpoints return references with only `reference_id` and `file_path`. For evaluation, debugging, or citation purposes, you can request the actual retrieved chunk content to be included in references.
+デフォルトでは、`/query` および `/query/stream` エンドポイントは `reference_id` と `file_path` のみを含むリファレンスを返します。評価、デバッグ、または引用のために、実際に取得されたチャンクコンテンツをリファレンスに含めるようリクエストできます。
 
-The `include_chunk_content` parameter (default: `false`) controls whether the actual text content of retrieved chunks is included in the response references. This is particularly useful for:
+`include_chunk_content` パラメータ（デフォルト: `false`）は、取得されたチャンクの実際のテキストコンテンツがレスポンスのリファレンスに含まれるかどうかを制御します。これは以下の場合に特に有用です:
 
-- **RAG Evaluation**: Testing systems like RAGAS that need access to retrieved contexts
-- **Debugging**: Verifying what content was actually used to generate the answer
-- **Citation Display**: Showing users the exact text passages that support the response
-- **Transparency**: Providing full visibility into the RAG retrieval process
+- **RAG 評価**: 取得されたコンテキストへのアクセスが必要な RAGAS のようなテストシステム
+- **デバッグ**: 回答の生成に実際に使用されたコンテンツの検証
+- **引用表示**: レスポンスを裏付ける正確なテキスト箇所のユーザーへの表示
+- **透明性**: RAG 検索プロセスの完全な可視性の提供
 
-**Important**: The `content` field is an **array of strings**, where each string represents a chunk from the same file. A single file may correspond to multiple chunks, so the content is returned as a list to preserve chunk boundaries.
+**重要**: `content` フィールドは**文字列の配列**であり、各文字列は同じファイルからのチャンクを表します。1つのファイルが複数のチャンクに対応する場合があるため、チャンクの境界を保持するためにコンテンツはリストとして返されます。
 
-**Example API Request:**
+**API リクエスト例:**
 
 ```json
 {
@@ -599,7 +598,7 @@ The `include_chunk_content` parameter (default: `false`) controls whether the ac
 }
 ```
 
-**Example Response (with chunk content):**
+**レスポンス例（チャンクコンテンツあり）:**
 
 ```json
 {
@@ -624,11 +623,11 @@ The `include_chunk_content` parameter (default: `false`) controls whether the ac
 }
 ```
 
-**Notes**:
-- This parameter only works when `include_references=true`. Setting `include_chunk_content=true` without including references has no effect.
-- **Breaking Change**: Prior versions returned `content` as a single concatenated string. Now it returns an array of strings to preserve individual chunk boundaries. If you need a single string, join the array elements with your preferred separator (e.g., `"\n\n".join(content)`).
+**注意事項**:
+- このパラメータは `include_references=true` の場合にのみ機能します。リファレンスを含めずに `include_chunk_content=true` を設定しても効果はありません。
+- **破壊的変更**: 以前のバージョンでは `content` を連結された単一の文字列として返していました。現在は個々のチャンクの境界を保持するために文字列の配列を返します。単一の文字列が必要な場合は、配列要素を任意のセパレータで結合してください（例: `"\n\n".join(content)`）。
 
-### .env Examples
+### .env の例
 
 ```bash
 ### Server Configuration
@@ -667,53 +666,53 @@ EMBEDDING_BINDING_HOST=http://localhost:11434
 # WHITELIST_PATHS=/health,/api/*
 ```
 
-## Document and Chunk Processing
+## ドキュメントとチャンクの処理
 
-The document processing pipeline in LightRAG is somewhat complex and is divided into two primary stages: the Extraction stage (entity and relationship extraction) and the Merging stage (entity and relationship merging). There are two key parameters that control pipeline concurrency: the maximum number of files processed in parallel (MAX_PARALLEL_INSERT) and the maximum number of concurrent LLM requests (MAX_ASYNC). The workflow is described as follows:
+LightRAG のドキュメント処理パイプラインはやや複雑で、主に2つのステージに分かれています: 抽出ステージ（エンティティと関係の抽出）とマージステージ（エンティティと関係のマージ）。パイプラインの同時実行を制御する2つの主要なパラメータがあります: 並列処理される最大ファイル数（MAX_PARALLEL_INSERT）と LLM への最大同時リクエスト数（MAX_ASYNC）。ワークフローは以下の通りです:
 
-1. MAX_ASYNC limits the total number of concurrent LLM requests in the system, including those for querying, extraction, and merging. LLM requests have different priorities: query operations have the highest priority, followed by merging, and then extraction.
-2. MAX_PARALLEL_INSERT controls the number of files processed in parallel during the extraction stage. For optimal performance, MAX_PARALLEL_INSERT is recommended to be set between 2 and 10, typically MAX_ASYNC/3. Setting this value too high can increase the likelihood of naming conflicts among entities and relationships across different documents during the merge phase, thereby reducing its overall efficiency.
-3. Within a single file, entity and relationship extractions from different text blocks are processed concurrently, with the degree of concurrency set by MAX_ASYNC. Only after MAX_ASYNC text blocks are processed will the system proceed to the next batch within the same file.
-4. When a file completes entity and relationship extraction, it enters the entity and relationship merging stage. This stage also processes multiple entities and relationships concurrently, with the concurrency level also controlled by `MAX_ASYNC`.
-5. LLM requests for the merging stage are prioritized over the extraction stage to ensure that files in the merging phase are processed quickly and their results are promptly updated in the vector database.
-6. To prevent race conditions, the merging stage avoids concurrent processing of the same entity or relationship. When multiple files involve the same entity or relationship that needs to be merged, they are processed serially.
-7. Each file is treated as an atomic processing unit in the pipeline. A file is marked as successfully processed only after all its text blocks have completed extraction and merging. If any error occurs during processing, the entire file is marked as failed and must be reprocessed.
-8. When a file is reprocessed due to errors, previously processed text blocks can be quickly skipped thanks to LLM caching. Although LLM cache is also utilized during the merging stage, inconsistencies in merging order may limit its effectiveness in this stage.
-9. If an error occurs during extraction, the system does not retain any intermediate results. If an error occurs during merging, already merged entities and relationships might be preserved; when the same file is reprocessed, re-extracted entities and relationships will be merged with the existing ones, without impacting the query results.
-10. At the end of the merging stage, all entity and relationship data are updated in the vector database. Should an error occur at this point, some updates may be retained. However, the next processing attempt will overwrite previous results, ensuring that successfully reprocessed files do not affect the integrity of future query results.
+1. MAX_ASYNC は、クエリ、抽出、マージを含むシステム内の同時 LLM リクエストの総数を制限します。LLM リクエストには異なる優先度があり、クエリ操作が最も高く、次にマージ、そして抽出の順です。
+2. MAX_PARALLEL_INSERT は、抽出ステージで並列処理されるファイルの数を制御します。最適なパフォーマンスのために、MAX_PARALLEL_INSERT は 2 から 10 の間に設定することを推奨します（通常は MAX_ASYNC/3）。この値を高く設定しすぎると、マージフェーズで異なるドキュメント間のエンティティと関係の命名の競合が発生する可能性が高くなり、全体的な効率が低下します。
+3. 単一ファイル内では、異なるテキストブロックからのエンティティと関係の抽出が同時に処理され、同時実行の度合いは MAX_ASYNC で設定されます。MAX_ASYNC 個のテキストブロックが処理された後にのみ、同じファイル内の次のバッチに進みます。
+4. ファイルのエンティティと関係の抽出が完了すると、エンティティと関係のマージステージに入ります。このステージでも複数のエンティティと関係が同時に処理され、同時実行レベルは `MAX_ASYNC` によって制御されます。
+5. マージステージの LLM リクエストは抽出ステージよりも優先され、マージフェーズのファイルが迅速に処理され、その結果がベクトルデータベースに速やかに更新されるようにします。
+6. 競合状態を防ぐために、マージステージでは同じエンティティや関係の同時処理を回避します。複数のファイルがマージ対象の同じエンティティや関係を含む場合、それらはシリアルに処理されます。
+7. 各ファイルはパイプラインにおけるアトミックな処理単位として扱われます。ファイルは、すべてのテキストブロックが抽出とマージを完了した場合にのみ、正常に処理されたとマークされます。処理中にエラーが発生した場合、ファイル全体が失敗とマークされ、再処理が必要になります。
+8. エラーによりファイルが再処理される場合、LLM キャッシュのおかげで、以前に処理されたテキストブロックは素早くスキップできます。LLM キャッシュはマージステージでも利用されますが、マージ順序の不一致により、このステージでの有効性が制限される場合があります。
+9. 抽出中にエラーが発生した場合、システムは中間結果を保持しません。マージ中にエラーが発生した場合、既にマージされたエンティティと関係は保持される可能性があります。同じファイルが再処理されると、再抽出されたエンティティと関係が既存のものとマージされ、クエリ結果に影響を与えません。
+10. マージステージの終了時に、すべてのエンティティと関係のデータがベクトルデータベースに更新されます。この時点でエラーが発生した場合、一部の更新が保持される可能性があります。ただし、次の処理試行で以前の結果が上書きされるため、正常に再処理されたファイルは将来のクエリ結果の整合性に影響を与えません。
 
-Large files should be divided into smaller segments to enable incremental processing. Reprocessing of failed files can be initiated by pressing the "Scan" button on the web UI.
+大きなファイルは、増分処理を可能にするために小さなセグメントに分割する必要があります。失敗したファイルの再処理は、Web UI の「Scan」ボタンを押すことで開始できます。
 
-## API Endpoints
+## API エンドポイント
 
-All servers (LoLLMs, Ollama, OpenAI and Azure OpenAI) provide the same REST API endpoints for RAG functionality. When the API Server is running, visit:
+すべてのサーバー（LoLLMs、Ollama、OpenAI、Azure OpenAI）は、RAG 機能のための同じ REST API エンドポイントを提供します。API Server が実行中の場合、以下にアクセスしてください:
 
 - Swagger UI: http://localhost:9621/docs
 - ReDoc: http://localhost:9621/redoc
 
-You can test the API endpoints using the provided curl commands or through the Swagger UI interface. Make sure to:
+提供されている curl コマンドまたは Swagger UI インターフェースを使用して API エンドポイントをテストできます。以下を確認してください:
 
-1. Start the appropriate backend service (LoLLMs, Ollama, or OpenAI)
-2. Start the RAG server
-3. Upload some documents using the document management endpoints
-4. Query the system using the query endpoints
-5. Trigger document scan if new files are put into the inputs directory
+1. 適切なバックエンドサービス（LoLLMs、Ollama、または OpenAI）を起動する
+2. RAG サーバーを起動する
+3. ドキュメント管理エンドポイントを使用していくつかのドキュメントをアップロードする
+4. クエリエンドポイントを使用してシステムにクエリを実行する
+5. inputs ディレクトリに新しいファイルが配置された場合、ドキュメントスキャンをトリガーする
 
-## Asynchronous Document Indexing with Progress Tracking
+## 非同期ドキュメントインデックスと進捗追跡
 
-LightRAG implements asynchronous document indexing to enable frontend monitoring and querying of document processing progress. Upon uploading files or inserting text through designated endpoints, a unique Track ID is returned to facilitate real-time progress monitoring.
+LightRAG は、フロントエンドがドキュメント処理の進捗を監視およびクエリできるように、非同期ドキュメントインデックスを実装しています。指定されたエンドポイントを通じてファイルをアップロードしたりテキストを挿入したりすると、リアルタイムの進捗監視を容易にするために一意の Track ID が返されます。
 
-**API Endpoints Supporting Track ID Generation:**
+**Track ID 生成をサポートする API エンドポイント:**
 
 * `/documents/upload`
 * `/documents/text`
 * `/documents/texts`
 
-**Document Processing Status Query Endpoint:**
+**ドキュメント処理ステータスのクエリエンドポイント:**
 * `/track_status/{track_id}`
 
-This endpoint provides comprehensive status information including:
-* Document processing status (pending/processing/processed/failed)
-* Content summary and metadata
-* Error messages if processing failed
-* Timestamps for creation and updates
+このエンドポイントは、以下を含む包括的なステータス情報を提供します:
+* ドキュメント処理ステータス（pending/processing/processed/failed）
+* コンテンツの概要とメタデータ
+* 処理が失敗した場合のエラーメッセージ
+* 作成と更新のタイムスタンプ

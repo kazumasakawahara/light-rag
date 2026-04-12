@@ -19,12 +19,12 @@ const getStoredLanguage = () => {
     const settingsString = localStorage.getItem('settings-storage')
     if (settingsString) {
       const settings = JSON.parse(settingsString)
-      return settings.state?.language || 'en'
+      return settings.state?.language || 'ja'
     }
   } catch (e) {
     console.error('Failed to get stored language:', e)
   }
-  return 'en'
+  return 'ja'
 }
 
 i18n

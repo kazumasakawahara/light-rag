@@ -1,25 +1,25 @@
-# Advanced Features
+# 高度な機能
 
-## Multimodal Document Processing (RAG-Anything Integration)
+## マルチモーダルドキュメント処理（RAG-Anything 統合）
 
-LightRAG integrates with [RAG-Anything](https://github.com/HKUDS/RAG-Anything), an **All-in-One Multimodal Document Processing RAG system** that enables advanced parsing and RAG capabilities across diverse document formats including PDFs, images, Office documents, tables, and formulas.
+LightRAG は [RAG-Anything](https://github.com/HKUDS/RAG-Anything) と統合されています。これは、PDF、画像、Office ドキュメント、テーブル、数式など、多様なドキュメント形式にわたる高度な解析と RAG 機能を実現する**オールインワン マルチモーダルドキュメント処理 RAG システム**です。
 
-**Key Features:**
-- End-to-End Multimodal Pipeline: complete workflow from document ingestion to multimodal query answering
-- Universal Document Support: PDFs, Office documents (DOC/DOCX/PPT/PPTX/XLS/XLSX), images, and diverse file formats
-- Specialized Content Analysis: dedicated processors for images, tables, mathematical equations
-- Multimodal Knowledge Graph: automatic entity extraction and cross-modal relationship discovery
-- Hybrid Intelligent Retrieval: advanced search spanning textual and multimodal content
+**主な機能:**
+- エンドツーエンドのマルチモーダルパイプライン：ドキュメント取り込みからマルチモーダルクエリ応答までの完全なワークフロー
+- ユニバーサルドキュメントサポート：PDF、Office ドキュメント（DOC/DOCX/PPT/PPTX/XLS/XLSX）、画像、および多様なファイル形式
+- 特化型コンテンツ分析：画像、テーブル、数式用の専用プロセッサ
+- マルチモーダルナレッジグラフ：自動エンティティ抽出とクロスモーダルな関係性の発見
+- ハイブリッドインテリジェント検索：テキストおよびマルチモーダルコンテンツにまたがる高度な検索
 
-### Quick Start
+### クイックスタート
 
-* Install Rag-Anything
+* Rag-Anything のインストール
 
 ```bash
 pip install raganything
 ```
 
-* RAGAnything Usage Example
+* RAGAnything の使用例
 
 ```python
 import asyncio
@@ -100,27 +100,27 @@ if __name__ == "__main__":
     asyncio.run(load_existing_lightrag())
 ```
 
-* For detailed documentation and advanced usage, see the [RAG-Anything repository](https://github.com/HKUDS/RAG-Anything).
+* 詳細なドキュメントと高度な使い方については、[RAG-Anything リポジトリ](https://github.com/HKUDS/RAG-Anything)を参照してください。
 
 ---
 
-## Token Usage Tracking
+## トークン使用量の追跡
 
-**Overview and Usage**
+**概要と使い方**
 
-LightRAG provides a `TokenTracker` tool to monitor and manage token consumption by large language models. This feature is useful for controlling API costs and optimizing performance.
+LightRAG は、大規模言語モデルによるトークン消費量を監視・管理するための `TokenTracker` ツールを提供しています。この機能は、API コストの管理やパフォーマンスの最適化に役立ちます。
 
 ```python
 from lightrag.utils import TokenTracker
 
 token_tracker = TokenTracker()
 
-# Method 1: Using context manager (Recommended)
+# 方法1：コンテキストマネージャを使用（推奨）
 with token_tracker:
     result1 = await llm_model_func("your question 1")
     result2 = await llm_model_func("your question 2")
 
-# Method 2: Manually adding token usage records
+# 方法2：手動でトークン使用量の記録を追加
 token_tracker.reset()
 
 rag.insert()
@@ -131,32 +131,32 @@ rag.query("your question 2", param=QueryParam(mode="mix"))
 print("Token usage:", token_tracker.get_usage())
 ```
 
-**Usage Tips:**
-- Use context managers for long sessions or batch operations to automatically track all token consumption
-- For segmented statistics, use manual mode and call `reset()` when appropriate
-- Regular checking of token usage helps detect abnormal consumption early
+**使い方のヒント：**
+- 長時間のセッションやバッチ操作では、コンテキストマネージャを使用してすべてのトークン消費量を自動的に追跡しましょう
+- セグメント別の統計には、手動モードを使用し、適切なタイミングで `reset()` を呼び出してください
+- トークン使用量を定期的に確認することで、異常な消費を早期に検出できます
 
-**Example files:**
-- `examples/lightrag_gemini_track_token_demo.py`: Token tracking with Google Gemini
-- `examples/lightrag_siliconcloud_track_token_demo.py`: Token tracking with SiliconCloud
+**サンプルファイル：**
+- `examples/lightrag_gemini_track_token_demo.py`：Google Gemini でのトークン追跡
+- `examples/lightrag_siliconcloud_track_token_demo.py`：SiliconCloud でのトークン追跡
 
 ---
 
-## Data Export Functions
+## データエクスポート機能
 
-LightRAG allows you to export your knowledge graph data in various formats for analysis, sharing, and backup.
+LightRAG では、分析、共有、バックアップのために、ナレッジグラフデータをさまざまな形式でエクスポートできます。
 
-**Basic Usage**
+**基本的な使い方**
 
 ```python
-# Basic CSV export (default format)
+# 基本的な CSV エクスポート（デフォルト形式）
 rag.export_data("knowledge_graph.csv")
 
-# Specify any format
+# 任意の形式を指定
 rag.export_data("output.xlsx", file_format="excel")
 ```
 
-**Supported File Formats**
+**サポートされるファイル形式**
 
 ```python
 rag.export_data("graph_data.csv", file_format="csv")
@@ -165,73 +165,73 @@ rag.export_data("graph_data.md", file_format="md")
 rag.export_data("graph_data.txt", file_format="txt")
 ```
 
-**Additional Options**
+**追加オプション**
 
-Include vector embeddings in the export (optional):
+ベクトル埋め込みをエクスポートに含める（オプション）：
 
 ```python
 rag.export_data("complete_data.csv", include_vector_data=True)
 ```
 
-All exports include entity information (names, IDs, metadata), relation data (connections between entities), and relationship information from the vector database.
+すべてのエクスポートには、エンティティ情報（名前、ID、メタデータ）、リレーションデータ（エンティティ間の接続）、およびベクトルデータベースからの関係情報が含まれます。
 
 ---
 
-## Cache Management
+## キャッシュ管理
 
-**Clear Cache**
+**キャッシュのクリア**
 
-`aclear_cache()` clears all cached entries in `llm_response_cache`. It does not support selective cleanup by mode or cache type.
+`aclear_cache()` は `llm_response_cache` 内のすべてのキャッシュエントリをクリアします。モードやキャッシュタイプによる選択的なクリーンアップはサポートしていません。
 
 ```python
-# Asynchronous
+# 非同期
 await rag.aclear_cache()
 
-# Synchronous
+# 同期
 rag.clear_cache()
 ```
 
-For selective cleanup of query-related caches, use the `lightrag.tools.clean_llm_query_cache` tool and see the guide in [lightrag/tools/README_CLEAN_LLM_QUERY_CACHE.md](../lightrag/tools/README_CLEAN_LLM_QUERY_CACHE.md). It manages query caches and keywords caches for `mix`, `hybrid`, `local`, and `global` modes. It does **not** clean extraction caches such as `default:extract:*` and `default:summary:*`.
+クエリ関連のキャッシュを選択的にクリーンアップするには、`lightrag.tools.clean_llm_query_cache` ツールを使用し、[lightrag/tools/README_CLEAN_LLM_QUERY_CACHE.md](../lightrag/tools/README_CLEAN_LLM_QUERY_CACHE.md) のガイドを参照してください。このツールは `mix`、`hybrid`、`local`、`global` モードのクエリキャッシュとキーワードキャッシュを管理します。`default:extract:*` や `default:summary:*` などの抽出キャッシュはクリーン**しません**。
 
 ---
 
-## Langfuse Observability Integration
+## Langfuse オブザーバビリティ統合
 
-Langfuse provides a drop-in replacement for the OpenAI client that automatically tracks all LLM interactions, enabling developers to monitor, debug, and optimize their RAG systems.
+Langfuse は OpenAI クライアントのドロップイン代替を提供し、すべての LLM インタラクションを自動的に追跡します。これにより、開発者は RAG システムの監視、デバッグ、最適化が可能になります。
 
-### Installation
+### インストール
 
 ```bash
 pip install lightrag-hku[observability]
-# Or from source:
+# または、ソースからインストール：
 pip install -e ".[observability]"
 ```
 
-### Configuration
+### 設定
 
-Add to `.env` file:
+`.env` ファイルに以下を追加します：
 
 ```
-## Langfuse Observability (Optional)
+## Langfuse オブザーバビリティ（オプション）
 LANGFUSE_SECRET_KEY=""
 LANGFUSE_PUBLIC_KEY=""
-LANGFUSE_HOST="https://cloud.langfuse.com"  # or your self-hosted instance
+LANGFUSE_HOST="https://cloud.langfuse.com"  # またはセルフホストインスタンス
 LANGFUSE_ENABLE_TRACE=true
 ```
 
-### Features
+### 機能
 
-Once installed and configured, Langfuse automatically traces all OpenAI LLM calls. Dashboard features include:
-- **Tracing**: View complete LLM call chains
-- **Analytics**: Token usage, latency, cost metrics
-- **Debugging**: Inspect prompts and responses
-- **Evaluation**: Compare model outputs
-- **Monitoring**: Real-time alerting
+インストールと設定が完了すると、Langfuse はすべての OpenAI LLM 呼び出しを自動的にトレースします。ダッシュボードの機能：
+- **トレーシング**：LLM 呼び出しチェーンの完全な表示
+- **アナリティクス**：トークン使用量、レイテンシ、コストメトリクス
+- **デバッグ**：プロンプトとレスポンスの検査
+- **評価**：モデル出力の比較
+- **モニタリング**：リアルタイムアラート
 
-> **Note**: LightRAG currently only integrates OpenAI-compatible API calls with Langfuse. APIs such as Ollama, Azure, and AWS Bedrock are not yet supported for Langfuse observability.
+> **注意**：LightRAG は現在、OpenAI 互換 API 呼び出しのみを Langfuse と統合しています。Ollama、Azure、AWS Bedrock などの API は、Langfuse オブザーバビリティではまだサポートされていません。
 
 ---
 
-## RAGAS-based Evaluation
+## RAGAS ベースの評価
 
-**RAGAS** (Retrieval Augmented Generation Assessment) is a framework for reference-free evaluation of RAG systems using LLMs. LightRAG provides an evaluation script based on RAGAS. For detailed information, see [RAGAS-based Evaluation Framework](../lightrag/evaluation/README_EVALUASTION_RAGAS.md).
+**RAGAS**（Retrieval Augmented Generation Assessment）は、LLM を使用した RAG システムの参照不要な評価フレームワークです。LightRAG は RAGAS に基づく評価スクリプトを提供しています。詳細については、[RAGAS ベースの評価フレームワーク](../lightrag/evaluation/README_EVALUASTION_RAGAS.md)を参照してください。

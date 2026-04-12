@@ -16,7 +16,7 @@ COLOR_GREEN :=
 COLOR_YELLOW :=
 endif
 
-.PHONY: help dev configure env-base env-storage env-server env-validate env-backup env-security-check env-base-rewrite env-storage-rewrite env base storage server validate backup security security-check base-rewrite storage-rewrite
+.PHONY: help dev configure env-base env-storage env-server env-validate env-backup env-security-check env-base-rewrite env-storage-rewrite env base storage server validate backup security security-check base-rewrite storage-rewrite setup-raganything
 
 help:
 	@printf "$(COLOR_BOLD)Interactive setup targets$(COLOR_RESET)\n"
@@ -97,3 +97,10 @@ env-security-check security security-check:
 
 env-backup backup:
 	@$(SETUP_BASH) $(SETUP_SCRIPT) --backup $(SETUP_OPTS)
+
+setup-raganything:
+	@printf "$(COLOR_BLUE)Installing RAG-Anything (multimodal extension)...$(COLOR_RESET)\n"
+	@uv pip install --no-deps 'raganything>=1.2.0'
+	@printf "$(COLOR_GREEN)RAG-Anything installed successfully.$(COLOR_RESET)\n"
+	@printf "Note: mineru[core] has dependency conflicts; raganything is installed without transitive deps.\n"
+	@printf "Run: .venv/bin/python process_document.py <file> to process multimodal documents.\n"

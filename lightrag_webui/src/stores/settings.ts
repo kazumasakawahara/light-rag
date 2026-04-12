@@ -88,7 +88,7 @@ const useSettingsStoreBase = create<SettingsState>()(
   persist(
     (set) => ({
       theme: 'system',
-      language: 'en',
+      language: 'ja',
       showPropertyPanel: true,
       showNodeSearchBar: true,
       showLegend: false,
