@@ -1297,6 +1297,9 @@ async def initialize_pipeline_status(workspace: str | None = None):
                 "request_pending": False,  # Flag for pending request for processing
                 "latest_message": "",  # Latest message from pipeline processing
                 "history_messages": history_messages,  # 使用共享列表对象
+                "total_chunks": 0,  # Total chunks to process in current document
+                "processed_chunks": 0,  # Chunks processed so far
+                "current_phase": "",  # Current processing phase
             }
         )
 

@@ -175,6 +175,13 @@
       "cancelSuccess": "パイプラインキャンセルが要求されました",
       "cancelFailed": "パイプラインのキャンセルに失敗しました\n{{error}}",
       "cancelNotBusy": "パイプラインは実行されていないため、キャンセルする必要はありません",
+      "chunkProgress": "チャンク処理進捗",
+      "phase": {
+        "entity_extraction": "エンティティ抽出中",
+        "entity_merge": "エンティティ統合中",
+        "relation_merge": "リレーション統合中",
+        "idle": "待機中"
+      },
       "errors": {
         "fetchFailed": "パイプラインステータスの取得に失敗しました\n{{error}}"
       }

@@ -2582,6 +2582,7 @@ async def merge_nodes_and_edges(
     async with pipeline_status_lock:
         pipeline_status["latest_message"] = log_message
         pipeline_status["history_messages"].append(log_message)
+        pipeline_status["current_phase"] = "entity_merge"
 
     async def _locked_process_entity_name(entity_name, entities):
         async with semaphore:
@@ -2687,6 +2688,7 @@ async def merge_nodes_and_edges(
     async with pipeline_status_lock:
         pipeline_status["latest_message"] = log_message
         pipeline_status["history_messages"].append(log_message)
+        pipeline_status["current_phase"] = "relation_merge"
 
     async def _locked_process_edges(edge_key, edges):
         async with semaphore:
@@ -2928,6 +2930,13 @@ async def extract_entities(
     processed_chunks = 0
     total_chunks = len(ordered_chunks)
 
+    # Initialize chunk-level progress in pipeline_status
+    if pipeline_status is not None and pipeline_status_lock is not None:
+        async with pipeline_status_lock:
+            pipeline_status["total_chunks"] = total_chunks
+            pipeline_status["processed_chunks"] = 0
+            pipeline_status["current_phase"] = "entity_extraction"
+
     async def _process_single_content(chunk_key_dp: tuple[str, TextChunkSchema]):
         """Process a single chunk
         Args:
@@ -3085,6 +3094,7 @@ async def extract_entities(
             async with pipeline_status_lock:
                 pipeline_status["latest_message"] = log_message
                 pipeline_status["history_messages"].append(log_message)
+                pipeline_status["processed_chunks"] = processed_chunks
 
         # Return the extracted nodes and edges for centralized processing
         return maybe_nodes, maybe_edges

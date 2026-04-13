@@ -223,6 +223,30 @@ export default function PipelineStatusDialog({
             </div>
           </div>
 
+          {/* Chunk Progress Bar */}
+          {status?.busy && status.total_chunks > 0 && (
+            <div className="rounded-md border p-3 space-y-2">
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-medium">{t('documentPanel.pipelineStatus.chunkProgress')}</span>
+                <span className="text-muted-foreground">
+                  {status.current_phase
+                    ? t(`documentPanel.pipelineStatus.phase.${status.current_phase}`, { defaultValue: status.current_phase })
+                    : t('documentPanel.pipelineStatus.phase.idle')}
+                </span>
+              </div>
+              <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-3 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-500 ease-out"
+                  style={{ width: `${Math.min(100, (status.processed_chunks / status.total_chunks) * 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>{status.processed_chunks} / {status.total_chunks} chunks</span>
+                <span>{Math.round((status.processed_chunks / status.total_chunks) * 100)}%</span>
+              </div>
+            </div>
+          )}
+
           {/* History Messages */}
           <div className="space-y-2">
             <div className="text-sm font-medium">{t('documentPanel.pipelineStatus.pipelineMessages')}:</div>

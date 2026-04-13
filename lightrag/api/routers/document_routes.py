@@ -786,6 +786,9 @@ class PipelineStatusResponse(BaseModel):
     latest_message: str = ""
     history_messages: Optional[List[str]] = None
     update_status: Optional[dict] = None
+    total_chunks: int = 0
+    processed_chunks: int = 0
+    current_phase: str = ""
 
     @field_validator("job_start", mode="before")
     @classmethod

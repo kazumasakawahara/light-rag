@@ -175,6 +175,13 @@
       "cancelSuccess": "Pipeline cancellation requested",
       "cancelFailed": "Failed to cancel pipeline\n{{error}}",
       "cancelNotBusy": "Pipeline is not running, no need to cancel",
+      "chunkProgress": "Chunk Processing Progress",
+      "phase": {
+        "entity_extraction": "Extracting entities",
+        "entity_merge": "Merging entities",
+        "relation_merge": "Merging relations",
+        "idle": "Idle"
+      },
       "errors": {
         "fetchFailed": "Failed to fetch pipeline status\n{{error}}"
       }

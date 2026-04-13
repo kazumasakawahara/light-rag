@@ -262,6 +262,9 @@ export type PipelineStatusResponse = {
   latest_message: string
   history_messages?: string[]
   update_status?: Record<string, any>
+  total_chunks: number
+  processed_chunks: number
+  current_phase: string
 }
 
 export type LoginResponse = {
