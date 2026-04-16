@@ -148,8 +148,17 @@ def japanese_chunking(
         while i < len(sentences):
             s_tok = sent_tokens[i]
 
-            # Handle oversized single sentence
-            if s_tok > chunk_token_size and not chunk_sents and not packed_sents:
+            # Handle oversized single sentence via token-window fallback.
+            # Only gate on packed_sents (not chunk_sents): if overlap content
+            # has been prepended for this chunk, discard it and take the
+            # fallback path. Otherwise the outer loop would re-enter with
+            # i unchanged (overlap occupies chunk_tok_count, the oversized
+            # sentence cannot fit, packed_sents stays empty, no chunk is
+            # appended, and i never advances → infinite loop).
+            # Cross-chunk continuity at this boundary is acceptable to lose
+            # because the oversized sentence's own window overlap preserves
+            # continuity within its split.
+            if s_tok > chunk_token_size and not packed_sents:
                 tokens = tokenizer.encode(sentences[i])
                 for start in range(
                     0, len(tokens), chunk_token_size - chunk_overlap_token_size
