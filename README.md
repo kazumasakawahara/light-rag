@@ -4,7 +4,7 @@
   <img src="./assets/logo.png" width="120" height="120" alt="LightRAG Logo" style="border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);">
 </div>
 
-# 🚀 LightRAG: シンプルで高速な検索拡張生成
+# 🚀 LightRAG: Simple and Fast Retrieval-Augmented Generation
 
 <div align="center">
     <a href="https://trendshift.io/repositories/13043" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13043" alt="HKUDS%2FLightRAG | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
@@ -32,7 +32,7 @@
     <p>
       <a href="README-zh.md"><img src="https://img.shields.io/badge/🇨🇳中文版-1a1a2e?style=for-the-badge"></a>
       <a href="README.md"><img src="https://img.shields.io/badge/🇺🇸English-1a1a2e?style=for-the-badge"></a>
-      <a href="README-ja.md"><img src="https://img.shields.io/badge/🇯🇵日本語版-1a1a2e?style=for-the-badge"></a>
+      <a href="docs/ja/README.md"><img src="https://img.shields.io/badge/🇯🇵日本語-1a1a2e?style=for-the-badge"></a>
     </p>
     <p>
       <a href="https://pepy.tech/projects/lightrag-hku"><img src="https://static.pepy.tech/personalized-badge/lightrag-hku?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads"></a>
@@ -73,233 +73,237 @@
 
 ---
 
-## 🎉 ニュース
-- [2026.03]🎯[新機能]: 統合ストレージバックエンドとして**OpenSearch**を統合し、LightRAGの4つすべてのストレージを包括的にサポートしました。
-- [2026.03]🎯[新機能]: セットアップウィザードを導入しました。Dockerによるエンベディング、リランキング、ストレージバックエンドのローカルデプロイをサポートします。
-- [2025.11]🎯[新機能]: **RAGASによる評価**と**Langfuseによるトレーシング**を統合しました。コンテキスト精度メトリクスをサポートするために、クエリ結果とともに取得されたコンテキストを返すようAPIを更新しました。
-- [2025.10]🎯[スケーラビリティ強化]: 処理のボトルネックを排除し、**大規模データセットの効率的な処理**をサポートしました。
-- [2025.09]🎯[新機能] Qwen3-30B-A3Bなどの**オープンソースLLM**におけるナレッジグラフ抽出精度を向上しました。
-- [2025.08]🎯[新機能] **リランカー**をサポートし、混合クエリのパフォーマンスを大幅に向上しました（デフォルトのクエリモードとして設定）。
-- [2025.08]🎯[新機能] 最適なクエリパフォーマンスを確保するための自動KG再生成を伴う**ドキュメント削除**機能を追加しました。
-- [2025.06]🎯[新リリース] 私たちのチームは[RAG-Anything](https://github.com/HKUDS/RAG-Anything)をリリースしました。テキスト、画像、表、数式をシームレスに処理する**オールインワンマルチモーダルRAG**システムです。
-- [2025.06]🎯[新機能] LightRAGは[RAG-Anything](https://github.com/HKUDS/RAG-Anything)統合により、PDF、画像、Officeドキュメント、表、数式など多様なフォーマットにわたるシームレスなドキュメント解析とRAG機能を実現する包括的なマルチモーダルデータ処理をサポートします。詳細は新しい[マルチモーダルセクション](https://github.com/HKUDS/LightRAG/?tab=readme-ov-file#multimodal-document-processing-rag-anything-integration)をご参照ください。
-- [2025.03]🎯[新機能] LightRAGが引用機能をサポートし、適切なソース帰属と強化されたドキュメント追跡が可能になりました。
-- [2025.02]🎯[新機能] MongoDBを統合データ管理のためのオールインワンストレージソリューションとして利用できるようになりました。
-- [2025.02]🎯[新リリース] 私たちのチームは[VideoRAG](https://github.com/HKUDS/VideoRAG)をリリースしました。超長尺動画を理解するためのRAGシステムです。
-- [2025.01]🎯[新リリース] 私たちのチームは[MiniRAG](https://github.com/HKUDS/MiniRAG)をリリースしました。小規模モデルでRAGをよりシンプルにします。
-- [2025.01]🎯PostgreSQLをデータ管理のためのオールインワンストレージソリューションとして利用できるようになりました。
-- [2024.11]🎯[新リソース] LightRAGの包括的なガイドが[LearnOpenCV](https://learnopencv.com/lightrag)で公開されました。詳細なチュートリアルとベストプラクティスをご覧ください。ブログ著者の素晴らしい貢献に深く感謝いたします！
-- [2024.11]🎯[新機能] LightRAG WebUIを導入しました。直感的なWebベースのダッシュボードでLightRAGナレッジの挿入、クエリ、可視化が可能なインターフェースです。
-- [2024.11]🎯[新機能] [Neo4Jをストレージとして使用](https://github.com/HKUDS/LightRAG?tab=readme-ov-file#using-neo4j-for-storage)できるようになりました。グラフデータベースをサポートします。
-- [2024.10]🎯[新機能] [LightRAG紹介動画](https://youtu.be/oageL-1I0GE)へのリンクを追加しました。LightRAGの機能をウォークスルーで紹介しています。著者の素晴らしい貢献に感謝いたします！
-- [2024.10]🎯[新チャンネル] [Discordチャンネル](https://discord.gg/yF2MmDJyGJ)を開設しました！💬 共有、議論、コラボレーションのためのコミュニティにぜひご参加ください！ 🎉🎉
+## 🎉 News
+- [2026.03]🎯[New Feature]: Integrated **OpenSearch** as a unified storage backend, providing comprehensive support for all four LightRAG storage.
+- [2026.03]🎯[New Feature]: Introduced a setup wizard. Support for local deployment of embedding, reranking, and storage backends via Docker.
+- [2025.11]🎯[New Feature]: Integrated **RAGAS for Evaluation** and **Langfuse for Tracing**. Updated the API to return retrieved contexts alongside query results to support context precision metrics.
+- [2025.10]🎯[Scalability Enhancement]: Eliminated processing bottlenecks to support **Large-Scale Datasets Efficiently**.
+- [2025.09]🎯[New Feature] Enhances knowledge graph extraction accuracy for **Open-Sourced LLMs** such as Qwen3-30B-A3B.
+- [2025.08]🎯[New Feature] **Reranker** is now supported, significantly boosting performance for mixed queries (set as default query mode).
+- [2025.08]🎯[New Feature] Added **Document Deletion** with automatic KG regeneration to ensure optimal query performance.
+- [2025.06]🎯[New Release] Our team has released [RAG-Anything](https://github.com/HKUDS/RAG-Anything) — an **All-in-One Multimodal RAG** system for seamless processing of text, images, tables, and equations.
+- [2025.06]🎯[New Feature] LightRAG now supports comprehensive multimodal data handling through [RAG-Anything](https://github.com/HKUDS/RAG-Anything) integration, enabling seamless document parsing and RAG capabilities across diverse formats including PDFs, images, Office documents, tables, and formulas. Please refer to the new [multimodal section](https://github.com/HKUDS/LightRAG/?tab=readme-ov-file#multimodal-document-processing-rag-anything-integration) for details.
+- [2025.03]🎯[New Feature] LightRAG now supports citation functionality, enabling proper source attribution and enhanced document traceability.
+- [2025.02]🎯[New Feature] You can now use MongoDB as an all-in-one storage solution for unified data management.
+- [2025.02]🎯[New Release] Our team has released [VideoRAG](https://github.com/HKUDS/VideoRAG)-a RAG system for understanding extremely long-context videos
+- [2025.01]🎯[New Release] Our team has released [MiniRAG](https://github.com/HKUDS/MiniRAG) making RAG simpler with small models.
+- [2025.01]🎯You can now use PostgreSQL as an all-in-one storage solution for data management.
+- [2024.11]🎯[New Resource] A comprehensive guide to LightRAG is now available on [LearnOpenCV](https://learnopencv.com/lightrag). — explore in-depth tutorials and best practices. Many thanks to the blog author for this excellent contribution!
+- [2024.11]🎯[New Feature] Introducing the LightRAG WebUI — an interface that allows you to insert, query, and visualize LightRAG knowledge through an intuitive web-based dashboard.
+- [2024.11]🎯[New Feature] You can now [use Neo4J for Storage](https://github.com/HKUDS/LightRAG?tab=readme-ov-file#using-neo4j-for-storage)-enabling graph database support.
+- [2024.10]🎯[New Feature] We've added a link to a [LightRAG Introduction Video](https://youtu.be/oageL-1I0GE). — a walkthrough of LightRAG's capabilities. Thanks to the author for this excellent contribution!
+- [2024.10]🎯[New Channel] We have created a [Discord channel](https://discord.gg/yF2MmDJyGJ)!💬 Welcome to join our community for sharing, discussions, and collaboration! 🎉🎉
 
 <details>
   <summary style="font-size: 1.4em; font-weight: bold; cursor: pointer; display: list-item;">
-    アルゴリズムフローチャート
+    Algorithm Flowchart
   </summary>
 
 ![LightRAG Indexing Flowchart](https://learnopencv.com/wp-content/uploads/2024/11/LightRAG-VectorDB-Json-KV-Store-Indexing-Flowchart-scaled.jpg)
-*図1: LightRAG インデキシングフローチャート - 画像出典 : [Source](https://learnopencv.com/lightrag/)*
+*Figure 1: LightRAG Indexing Flowchart - Img Caption : [Source](https://learnopencv.com/lightrag/)*
 ![LightRAG Retrieval and Querying Flowchart](https://learnopencv.com/wp-content/uploads/2024/11/LightRAG-Querying-Flowchart-Dual-Level-Retrieval-Generation-Knowledge-Graphs-scaled.jpg)
-*図2: LightRAG 検索・クエリフローチャート - 画像出典 : [Source](https://learnopencv.com/lightrag/)*
+*Figure 2: LightRAG Retrieval and Querying Flowchart - Img Caption : [Source](https://learnopencv.com/lightrag/)*
 
 </details>
 
-## インストール
+## Installation
 
-**💡 uvによるパッケージ管理の使用**: このプロジェクトでは、高速で信頼性の高いPythonパッケージ管理のために[uv](https://docs.astral.sh/uv/)を使用しています。まずuvをインストールしてください：`curl -LsSf https://astral.sh/uv/install.sh | sh`（Unix/macOS）または `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"`（Windows）
+**💡 Using uv for Package Management**: This project uses [uv](https://docs.astral.sh/uv/) for fast and reliable Python package management. Install uv first: `curl -LsSf https://astral.sh/uv/install.sh | sh` (Unix/macOS) or `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"` (Windows)
 
-> **注意**: pipも使用できますが、より優れたパフォーマンスとより信頼性の高い依存関係管理のためにuvを推奨します。
+> **Note**: You can also use pip if you prefer, but uv is recommended for better performance and more reliable dependency management.
 >
-> **📦 オフラインデプロイメント**: オフラインまたはエアギャップ環境の場合、すべての依存関係とキャッシュファイルの事前インストール手順については[オフラインデプロイメントガイド](./docs/OfflineDeployment.md)をご参照ください。
+> **📦 Offline Deployment**: For offline or air-gapped environments, see the [Offline Deployment Guide](./docs/OfflineDeployment.md) for instructions on pre-installing all dependencies and cache files.
 
-### LightRAG Serverのインストール
+### Install LightRAG Server
 
-LightRAG Serverは、Web UIとAPIサポートを提供するように設計されています。Web UIはドキュメントのインデキシング、ナレッジグラフの探索、シンプルなRAGクエリインターフェースを提供します。LightRAG ServerはOllama互換インターフェースも提供しており、LightRAGをOllamaチャットモデルとしてエミュレートすることを目的としています。これにより、Open WebUIなどのAIチャットボットがLightRAGに簡単にアクセスできます。
+The LightRAG Server is designed to provide Web UI and API support. The Web UI facilitates document indexing, knowledge graph exploration, and a simple RAG query interface. LightRAG Server also provide an Ollama compatible interfaces, aiming to emulate LightRAG as an Ollama chat model. This allows AI chat bot, such as Open WebUI, to access LightRAG easily.
 
-* PyPIからのインストール
+* Install from PyPI
 
 ```bash
-### uvを使用してLightRAG Serverをツールとしてインストール（推奨）
+### Install LightRAG Server as tool using uv (recommended)
 uv tool install "lightrag-hku[api]"
 
-### またはpipを使用
+### Or using pip
 # python -m venv .venv
 # source .venv/bin/activate  # Windows: .venv\Scripts\activate
 # pip install "lightrag-hku[api]"
 
-### フロントエンドアーティファクトのビルド
+### Build front-end artifacts
 cd lightrag_webui
 bun install --frozen-lockfile
 bun run build
 cd ..
 
-# envファイルのセットアップ
-# GitHubリポジトリルートからダウンロードするか、
-# ローカルソースチェックアウトからコピーしてenv.exampleファイルを取得してください。
-cp env.example .env  # .envをLLMおよびエンベディングの設定で更新してください
-# サーバーの起動
+# Setup env file
+# Obtain the env.example file by downloading it from the GitHub repository root
+# or by copying it from a local source checkout.
+cp env.example .env  # Update the .env with your LLM and embedding configurations
+# Launch the server
 lightrag-server
 ```
 
-* ソースからのインストール
+* Installation from Source
 
 ```bash
 git clone https://github.com/HKUDS/LightRAG.git
 cd LightRAG
 
-# 開発環境のブートストラップ（推奨）
+# Bootstrap the development environment (recommended)
 make dev
-source .venv/bin/activate  # 仮想環境の有効化（Linux/macOS）
-# Windowsの場合: .venv\Scripts\activate
+source .venv/bin/activate  # Activate the virtual environment (Linux/macOS)
+# Or on Windows: .venv\Scripts\activate
 
-# make devはテストツールチェーンと完全なオフラインスタック
-# （API、ストレージバックエンド、プロバイダー統合）をインストールし、フロントエンドをビルドします。
-# サーバーを起動する前にmake env-baseを実行するか、env.exampleを.envにコピーしてください。
+# make dev installs the test toolchain plus the full offline stack
+# (API, storage backends, and provider integrations), then builds the frontend.
+# Run make env-base or copy env.example to .env before starting the server.
 
-# uvによる同等の手動ステップ
-# 注意: uv syncは自動的に.venv/に仮想環境を作成します
+# Equivalent manual steps with uv
+# Note: uv sync automatically creates a virtual environment in .venv/
 uv sync --extra test --extra offline
-source .venv/bin/activate  # 仮想環境の有効化（Linux/macOS）
-# Windowsの場合: .venv\Scripts\activate
+source .venv/bin/activate  # Activate the virtual environment (Linux/macOS)
+# Or on Windows: .venv\Scripts\activate
 
-### またはpipと仮想環境を使用
+### Or using pip with virtual environment
 # python -m venv .venv
 # source .venv/bin/activate  # Windows: .venv\Scripts\activate
 # pip install -e ".[test,offline]"
 
-# フロントエンドアーティファクトのビルド
+# Build front-end artifacts
 cd lightrag_webui
 bun install --frozen-lockfile
 bun run build
 cd ..
 
-# envファイルのセットアップ
-make env-base  # または: cp env.example .env として手動で更新
-# API-WebUIサーバーの起動
+# setup env file
+make env-base  # Or: cp env.example .env and update it manually
+# Launch API-WebUI server
 lightrag-server
 ```
 
-* Docker ComposeによるLightRAG Serverの起動
+* Launching the LightRAG Server with Docker Compose
 
 ```bash
 git clone https://github.com/HKUDS/LightRAG.git
 cd LightRAG
-cp env.example .env  # .envをLLMおよびエンベディングの設定で更新してください
-# .envでLLMとエンベディングの設定を変更
+cp env.example .env  # Update the .env with your LLM and embedding configurations
+# modify LLM and Embedding settings in .env
 docker compose up
 ```
 
-> LightRAG Dockerイメージの過去のバージョンはこちらから確認できます：[LightRAG Docker Images]( https://github.com/HKUDS/LightRAG/pkgs/container/lightrag)
+> Historical versions of LightRAG docker images can be found here: [LightRAG Docker Images]( https://github.com/HKUDS/LightRAG/pkgs/container/lightrag)
+>
+> Official GHCR images published by GitHub Actions are signed with Sigstore Cosign using GitHub OIDC. See [docs/DockerDeployment.md](./docs/DockerDeployment.md#verify-official-ghcr-images-with-cosign) for verification commands.
 
-### セットアップツールによる.envファイルの作成
+### Create .env File With Setup Tool
 
-`env.example`を手動で編集する代わりに、対話型セットアップウィザードを使用して設定済みの`.env`と、必要に応じて`docker-compose.final.yml`を生成できます：
+Instead of editing `env.example` by hand, use the interactive setup wizard to generate a configured `.env` and, when needed, `docker-compose.final.yml`:
 
 ```bash
-make env-base           # 必須の最初のステップ: LLM、エンベディング、リランカー
-make env-storage        # オプション: ストレージバックエンドとデータベースサービス
-make env-server         # オプション: サーバーポート、認証、SSL
-make env-base-rewrite   # オプション: ウィザード管理のcomposeサービスを強制再生成
-make env-storage-rewrite # オプション: ウィザード管理のcomposeサービスを強制再生成
-make env-security-check # オプション: 現在の.envのセキュリティリスクを監査
+make env-base           # Required first step: LLM, embedding, reranker
+make env-storage        # Optional: storage backends and database services
+make env-server         # Optional: server port, auth, and SSL
+make env-base-rewrite   # Optional: force-regenerate wizard-managed compose services
+make env-storage-rewrite # Optional: force-regenerate wizard-managed compose services
+make env-security-check # Optional: audit the current .env for security risks
 ```
 
-すべてのターゲットの詳細な説明については[docs/InteractiveSetup.md](./docs/InteractiveSetup.md)をご参照ください。
-セットアップウィザードは設定のみを更新します。デプロイメント前に現在の`.env`のセキュリティリスクを監査するには、`make env-security-check`を別途実行してください。
-デフォルトでは、セットアップを再実行すると変更されていないウィザード管理のcomposeサービスブロックは保持されます。管理対象ブロックをバンドルされたテンプレートから再構築する必要がある場合にのみ`*-rewrite`ターゲットを使用してください。
+For full description of every target see [docs/InteractiveSetup.md](./docs/InteractiveSetup.md).
+The setup wizards update configuration only; run `make env-security-check` separately to audit the
+current `.env` for security risks before deployment.
+By default, rerunning the setup preserves unchanged wizard-managed compose service blocks; use a
+`*-rewrite` target only when you need to rebuild those managed blocks from the bundled templates.
 
-### LightRAG Coreのインストール
+### Install  LightRAG Core
 
-* ソースからのインストール（推奨）
+* Install from source (Recommended)
 
 ```bash
 cd LightRAG
-# 注意: uv syncは自動的に.venv/に仮想環境を作成します
+# Note: uv sync automatically creates a virtual environment in .venv/
 uv sync
-source .venv/bin/activate  # 仮想環境の有効化（Linux/macOS）
-# Windowsの場合: .venv\Scripts\activate
+source .venv/bin/activate  # Activate the virtual environment (Linux/macOS)
+# Or on Windows: .venv\Scripts\activate
 
-# または: pip install -e .
+# Or: pip install -e .
 ```
 
-* PyPIからのインストール
+* Install from PyPI
 
 ```bash
 uv pip install lightrag-hku
-# または: pip install lightrag-hku
+# Or: pip install lightrag-hku
 ```
 
-## クイックスタート
+## Quick Start
 
-### LightRAGに必要なLLMと技術スタック
+### LLM and Technology Stack Requirements for LightRAG
 
-LightRAGはドキュメントからエンティティ・関係抽出タスクをLLMに要求するため、従来のRAGと比較して大規模言語モデル（LLM）の能力に対する要求が大幅に高くなっています。適切なエンベディングモデルとリランカーモデルを設定することも、クエリパフォーマンスの向上に不可欠です。
+LightRAG's demands on the capabilities of Large Language Models (LLMs) are significantly higher than those of traditional RAG, as it requires the LLM to perform entity-relationship extraction tasks from documents. Configuring appropriate Embedding and Reranker models is also crucial for improving query performance.
 
-- **LLMの選択**:
-  - 少なくとも320億パラメータのLLMを使用することを推奨します。
-  - コンテキスト長は少なくとも32KBが必要で、64KBを推奨します。
-  - ドキュメントインデキシング段階では推論モデルの選択は推奨しません。
-  - クエリ段階では、より良いクエリ結果を得るために、インデキシング段階で使用したモデルよりも高い能力を持つモデルを選択することを推奨します。
-- **エンベディングモデル**:
-  - 高性能なエンベディングモデルはRAGに不可欠です。
-  - `BAAI/bge-m3`や`text-embedding-3-large`などの主要な多言語エンベディングモデルの使用を推奨します。
-  - **重要な注意**: エンベディングモデルはドキュメントインデキシング前に決定する必要があり、ドキュメントクエリフェーズでも同じモデルを使用する必要があります。特定のストレージソリューション（例：PostgreSQL）では、初回テーブル作成時にベクトル次元を定義する必要があります。そのため、エンベディングモデルを変更する場合は、既存のベクトル関連テーブルを削除し、LightRAGが新しい次元で再作成できるようにする必要があります。
-- **リランカーモデルの設定**:
-  - リランカーモデルを設定することで、LightRAGの検索パフォーマンスを大幅に向上させることができます。
-  - リランカーモデルが有効な場合、デフォルトのクエリモードとして「mixモード」を設定することを推奨します。
-  - `BAAI/bge-reranker-v2-m3`やJinaなどのサービスが提供するモデルなど、主要なリランカーモデルの使用を推奨します。
+- **LLM Selection**:
+  - It is recommended to use an LLM with at least 32 billion parameters.
+  - The context length should be at least 32KB, with 64KB being recommended.
+  - It is not recommended to choose reasoning models during the document indexing stage.
+  - During the query stage, it is recommended to choose models with stronger capabilities than those used in the indexing stage to achieve better query results.
+- **Embedding Model**:
+  - A high-performance Embedding model is essential for RAG.
+  - We recommend using mainstream multilingual Embedding models, such as: `BAAI/bge-m3` and `text-embedding-3-large`.
+  - **Important Note**: The Embedding model must be determined before document indexing, and the same model must be used during the document query phase. For certain storage solutions (e.g., PostgreSQL), the vector dimension must be defined upon initial table creation. Therefore, when changing embedding models, it is necessary to delete the existing vector-related tables and allow LightRAG to recreate them with the new dimensions.
+- **Reranker Model Configuration**:
+  - Configuring a Reranker model can significantly enhance LightRAG's retrieval performance.
+  - When a Reranker model is enabled, it is recommended to set the "mix mode" as the default query mode.
+  - We recommend using mainstream Reranker models, such as: `BAAI/bge-reranker-v2-m3` or models provided by services like Jina.
 
-### LightRAG Serverのクイックスタート
+### Quick Start for LightRAG Server
 
-LightRAG Serverは、Web UIとAPIサポートを提供するように設計されています。LightRAG Serverは包括的なナレッジグラフ可視化機能を提供します。さまざまな重力レイアウト、ノードクエリ、サブグラフフィルタリングなどをサポートしています。LightRAG Serverの詳細については、[LightRAG Server](./docs/LightRAG-API-Server.md)をご参照ください。
+The LightRAG Server is designed to provide Web UI and API support. The LightRAG Server offers a comprehensive knowledge graph visualization feature. It supports various gravity layouts, node queries, subgraph filtering, and more. For more information about LightRAG Server, please refer to [LightRAG Server](./docs/LightRAG-API-Server.md).
 
 ![iShot_2025-03-23_12.40.08](./README.assets/iShot_2025-03-23_12.40.08.png)
 
 
-### LightRAG Coreのクイックスタート
+### Quick Start for LightRAG core
 
-LightRAG Coreを使い始めるには、`examples`フォルダにあるサンプルコードをご参照ください。また、ローカルセットアップの手順を案内する[動画デモ](https://www.youtube.com/watch?v=g21royNJ4fw)も提供しています。OpenAI APIキーをお持ちであれば、すぐにデモを実行できます：
+To get started with LightRAG core, refer to the sample codes available in the `examples` folder. Additionally, a [video demo](https://www.youtube.com/watch?v=g21royNJ4fw) demonstration is provided to guide you through the local setup process. If you already possess an OpenAI API key, you can run the demo right away:
 
 ```bash
-### プロジェクトフォルダでデモコードを実行してください
+### you should run the demo code with project folder
 cd LightRAG
-### OpenAIのAPI-KEYを設定
+### provide your API-KEY for OpenAI
 export OPENAI_API_KEY="sk-...your_opeai_key..."
-### Charles Dickensの「A Christmas Carol」のデモドキュメントをダウンロード
+### download the demo document of "A Christmas Carol" by Charles Dickens
 curl https://raw.githubusercontent.com/gusye1234/nano-graphrag/main/tests/mock_data.txt > ./book.txt
-### デモコードを実行
+### run the demo code
 python examples/lightrag_openai_demo.py
 ```
 
-ストリーミングレスポンスの実装例については、`examples/lightrag_openai_compatible_demo.py`をご参照ください。実行前に、サンプルコードのLLMおよびエンベディング設定を適切に変更してください。
+For a streaming response implementation example, please see `examples/lightrag_openai_compatible_demo.py`. Prior to execution, ensure you modify the sample code's LLM and embedding configurations accordingly.
 
-**注意1**: デモプログラム実行時、テストスクリプトによって使用するエンベディングモデルが異なる場合があります。別のエンベディングモデルに切り替える場合は、データディレクトリ（`./dickens`）をクリアする必要があります。そうしないとプログラムがエラーになる可能性があります。LLMキャッシュを保持したい場合は、データディレクトリをクリアする際に`kv_store_llm_response_cache.json`ファイルを保存しておくことができます。
+**Note 1**: When running the demo program, please be aware that different test scripts may use different embedding models. If you switch to a different embedding model, you must clear the data directory (`./dickens`); otherwise, the program may encounter errors. If you wish to retain the LLM cache, you can preserve the `kv_store_llm_response_cache.json` file while clearing the data directory.
 
-**注意2**: `lightrag_openai_demo.py`と`lightrag_openai_compatible_demo.py`のみが公式にサポートされているサンプルコードです。その他のサンプルファイルは、完全なテストと最適化が行われていないコミュニティの貢献です。
+**Note 2**: Only `lightrag_openai_demo.py` and `lightrag_openai_compatible_demo.py` are officially supported sample codes. Other sample files are community contributions that haven't undergone full testing and optimization.
 
-## LightRAG Coreを使ったプログラミング
+## Programming with LightRAG Core
 
-Core APIの完全なリファレンス（初期化パラメータ、`QueryParam`、LLM/エンベディングプロバイダーの例（OpenAI、Ollama、Azure、Gemini、HuggingFace、LlamaIndex）、リランカーインジェクション、挿入操作、エンティティ/リレーション管理、削除/マージ）については、**[docs/ProgramingWithCore.md](./docs/ProgramingWithCore.md)**をご参照ください。
+For the complete Core API reference — including init parameters, `QueryParam`, LLM/embedding provider examples (OpenAI, Ollama, Azure, Gemini, HuggingFace, LlamaIndex), reranker injection, insert operations, entity/relation management, and delete/merge — see **[docs/ProgramingWithCore.md](./docs/ProgramingWithCore.md)**.
 
-> ⚠️ **LightRAGをプロジェクトに統合する場合は、LightRAG Serverが提供するREST APIの利用を推奨します**。LightRAG Coreは通常、組み込みアプリケーション向け、または研究・評価を実施したい研究者向けです。
+> ⚠️ **If you would like to integrate LightRAG into your project, we recommend utilizing the REST API provided by the LightRAG Server**. LightRAG Core is typically intended for embedded applications or for researchers who wish to conduct studies and evaluations.
 
-### 高度な機能
+### Advanced Features
 
-LightRAGは、トークン使用量の追跡、ナレッジグラフデータのエクスポート、LLMキャッシュ管理、Langfuseオブザーバビリティ統合、RAGASベースの評価などの追加機能を提供します。**[docs/AdvancedFeatures.md](./docs/AdvancedFeatures.md)**をご参照ください。
+LightRAG provides additional capabilities including token usage tracking, knowledge graph data export, LLM cache management, Langfuse observability integration, and RAGAS-based evaluation. See **[docs/AdvancedFeatures.md](./docs/AdvancedFeatures.md)**.
 
-### マルチモーダルドキュメント処理（RAG-Anything統合）
+### Multimodal Document Processing (RAG-Anything Integration)
 
-LightRAGは[RAG-Anything](https://github.com/HKUDS/RAG-Anything)と統合し、PDF、Officeドキュメント、画像、表、数式にわたるエンドツーエンドのマルチモーダルRAGを実現します。セットアップと使用例については、**[docs/AdvancedFeatures.md](./docs/AdvancedFeatures.md)**をご参照ください。
+LightRAG integrates with [RAG-Anything](https://github.com/HKUDS/RAG-Anything) for end-to-end multimodal RAG across PDFs, Office documents, images, tables, and formulas. For setup and usage examples, see **[docs/AdvancedFeatures.md](./docs/AdvancedFeatures.md)**.
 
-> LightRAG Serverは、近日中にRAG-Anythingのマルチモーダル処理機能をファイル処理パイプラインに統合する予定です。ご期待ください。
+> LightRAG Server will soon integrate RAG-Anything’s multimodal processing capabilities into its file processing pipeline. Stay tuned.
 
-## 論文の実験結果の再現
+## Replicating Findings in the Papper
 
-LightRAGは、農業、コンピュータサイエンス、法律、混合ドメインにおいて、NaiveRAG、RQ-RAG、HyDE、GraphRAGを一貫して上回っています。完全な評価方法、プロンプト、再現手順については、**[docs/Reproduce.md](./docs/Reproduce.md)**をご参照ください。
+LightRAG consistently outperforms NaiveRAG, RQ-RAG, HyDE, and GraphRAG across agriculture, computer science, legal, and mixed domains. For the full evaluation methodology, prompts, and reproduce steps, see **[docs/Reproduce.md](./docs/Reproduce.md)**.
 
-**全体パフォーマンステーブル**
+**Overall Performance Table**
 
 ||**Agriculture**||**CS**||**Legal**||**Mix**||
 |----------------------|---------------|------------|------|------------|---------|------------|-------|------------|
@@ -325,9 +329,9 @@ LightRAGは、農業、コンピュータサイエンス、法律、混合ドメ
 |**Overall**|45.2%|**54.8%**|48.0%|**52.0%**|47.2%|**52.8%**|**50.4%**|49.6%|
 
 
-## 🔗 関連プロジェクト
+## 🔗 Related Projects
 
-*エコシステムと拡張機能*
+*Ecosystem & Extensions*
 
 <div align="center">
   <table>
@@ -338,7 +342,7 @@ LightRAGは、農業、コンピュータサイエンス、法律、混合ドメ
             <span style="font-size: 32px;">📸</span>
           </div>
           <b>RAG-Anything</b><br>
-          <sub>マルチモーダルRAG</sub>
+          <sub>Multimodal RAG</sub>
         </a>
       </td>
       <td align="center">
@@ -347,7 +351,7 @@ LightRAGは、農業、コンピュータサイエンス、法律、混合ドメ
             <span style="font-size: 32px;">🎥</span>
           </div>
           <b>VideoRAG</b><br>
-          <sub>超長尺動画RAG</sub>
+          <sub>Extreme Long-Context Video RAG</sub>
         </a>
       </td>
       <td align="center">
@@ -356,7 +360,7 @@ LightRAGは、農業、コンピュータサイエンス、法律、混合ドメ
             <span style="font-size: 32px;">✨</span>
           </div>
           <b>MiniRAG</b><br>
-          <sub>超シンプルRAG</sub>
+          <sub>Extremely Simple RAG</sub>
         </a>
       </td>
     </tr>
@@ -365,21 +369,21 @@ LightRAGは、農業、コンピュータサイエンス、法律、混合ドメ
 
 ---
 
-## ⭐ Star履歴
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=HKUDS/LightRAG&type=Date)](https://star-history.com/#HKUDS/LightRAG&Date)
 
-## 🤝 コントリビューション
+## 🤝 Contribution
 
 <div align="center">
-  バグ修正、新機能、ドキュメントの改善など、あらゆる種類のコントリビューションを歓迎します。<br>
-  プルリクエストを送信する前に、<a href=".github/CONTRIBUTING.md"><strong>コントリビューションガイド</strong></a>をお読みください。
+  We welcome contributions of all kinds — bug fixes, new features, documentation improvements, and more.<br>
+  Please read our <a href=".github/CONTRIBUTING.md"><strong>Contributing Guide</strong></a> before submitting a pull request.
 </div>
 
 <br>
 
 <div align="center">
-  貴重なコントリビューションをいただいたすべてのコントリビューターに感謝いたします。
+  We thank all our contributors for their valuable contributions.
 </div>
 
 <div align="center">
@@ -389,7 +393,7 @@ LightRAGは、農業、コンピュータサイエンス、法律、混合ドメ
 </div>
 
 
-## 📖 引用
+## 📖 Citation
 
 ```python
 @article{guo2024lightrag,
@@ -425,7 +429,7 @@ primaryClass={cs.IR}
   <div style="width: 100%; max-width: 600px; margin: 20px auto; padding: 20px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%); border-radius: 15px; border: 1px solid rgba(0, 217, 255, 0.2);">
     <div style="display: flex; justify-content: center; align-items: center; gap: 15px;">
       <span style="font-size: 24px;">⭐</span>
-      <span style="color: #00d9ff; font-size: 18px;">LightRAGをご覧いただきありがとうございます！</span>
+      <span style="color: #00d9ff; font-size: 18px;">Thank you for visiting LightRAG!</span>
       <span style="font-size: 24px;">⭐</span>
     </div>
   </div>

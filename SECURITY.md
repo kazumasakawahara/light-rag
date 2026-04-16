@@ -1,16 +1,16 @@
-# セキュリティ問題の報告
+# Reporting Security Issues
 
-LightRAGチームおよびコミュニティは、セキュリティバグを深刻に受け止めています。責任ある情報開示にご協力いただけることに感謝しており、ご貢献を認識するために最善を尽くします。
+The LightRAG team and community take security bugs seriously. We appreciate your efforts to responsibly disclose your findings, and will make every effort to acknowledge your contributions.
 
-セキュリティ問題を報告するには、GitHub Security Advisoryをご利用ください：[脆弱性の報告](https://github.com/HKUDS/LightRAG/security/advisories/new)
+To report a security issue, please use the GitHub Security Advisory:  [Report a Vulnerability](https://github.com/HKUDS/LightRAG/security/advisories/new)
 
-LightRAGチームは、報告の処理における次のステップを示す回答を送信します。最初の回答の後、セキュリティチームは修正および完全な発表に向けた進捗状況をお知らせし、追加情報やガイダンスを求める場合があります。
+The LightRAG team will send a response indicating the next steps in handling your report. After the initial reply to your report, the security team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
 
-サードパーティモジュールのセキュリティバグは、そのモジュールを管理している個人またはチームに報告してください。
+Report security bugs in third-party modules to the person or team maintaining the module.
 
-### サポート対象バージョン
+### Supported Versions
 
-現在、セキュリティアップデートがサポートされているバージョンは以下のとおりです。
+The following versions currently being supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
