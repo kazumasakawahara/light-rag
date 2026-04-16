@@ -1,141 +1,141 @@
-# フロントエンドビルドガイド
+# Frontend Build Guide
 
-## 概要
+## Overview
 
-LightRAG プロジェクトには React ベースの WebUI フロントエンドが含まれています。このガイドでは、さまざまなシナリオにおけるフロントエンドビルドの仕組みを説明します。
+The LightRAG project includes a React-based WebUI frontend. This guide explains how frontend building works in different scenarios.
 
-## 基本原則
+## Key Principle
 
-- **Git リポジトリ**: フロントエンドのビルド成果物は**含まれません**（クリーンな状態を維持）
-- **PyPI パッケージ**: フロントエンドのビルド成果物が**含まれます**（すぐに使用可能）
-- **ビルドツール**: **Bun** を推奨しますが、**Node.js/npm** もフォールバックとして完全にサポートされています
+- **Git Repository**: Frontend build results are **NOT** included (kept clean)
+- **PyPI Package**: Frontend build results **ARE** included (ready to use)
+- **Build Tool**: **Bun** is recommended, but **Node.js/npm** is fully supported as a fallback
 
-## インストールシナリオ
+## Installation Scenarios
 
-### 1. エンドユーザー（PyPI から） ✨
+### 1. End Users (From PyPI) ✨
 
-**コマンド:**
+**Command:**
 ```bash
 pip install lightrag-hku[api]
 ```
 
-**動作内容:**
-- フロントエンドはすでにビルド済みでパッケージに含まれています
-- 追加の手順は不要です
-- Web インターフェースはすぐに使用できます
+**What happens:**
+- Frontend is already built and included in the package
+- No additional steps needed
+- Web interface works immediately
 
 ---
 
-### 2. 開発モード（コントリビューター向け推奨） 🔧
+### 2. Development Mode (Recommended for Contributors) 🔧
 
-**コマンド:**
+**Command:**
 ```bash
-# リポジトリをクローン
+# Clone the repository
 git clone https://github.com/HKUDS/LightRAG.git
 cd LightRAG
 
-# 編集可能モードでインストール（フロントエンドのビルドはまだ不要）
+# Install in editable mode (no frontend build required yet)
 pip install -e ".[api]"
 
-# 必要に応じてフロントエンドをビルド（いつでも実行可能）
+# Build frontend when needed (can be done anytime)
 cd lightrag_webui
 bun install --frozen-lockfile
 bun run build
 cd ..
 ```
 
-**利点:**
-- まずインストールし、後でビルド（柔軟なワークフロー）
-- 変更が即座に反映（シンボリックリンクモード）
-- 再インストールなしでいつでもフロントエンドを再ビルド可能
+**Advantages:**
+- Install first, build later (flexible workflow)
+- Changes take effect immediately (symlink mode)
+- Frontend can be rebuilt anytime without reinstalling
 
-**仕組み:**
-- ソースディレクトリへのシンボリックリンクを作成
-- フロントエンドのビルド出力は `lightrag/api/webui/` に格納
-- インストール済みパッケージに変更が即座に反映
+**How it works:**
+- Creates symlinks to source directory
+- Frontend build output goes to `lightrag/api/webui/`
+- Changes are immediately visible in installed package
 
 ---
 
-### 3. 通常インストール（パッケージビルドのテスト） 📦
+### 3. Normal Installation (Testing Package Build) 📦
 
-**コマンド:**
+**Command:**
 ```bash
-# リポジトリをクローン
+# Clone the repository
 git clone https://github.com/HKUDS/LightRAG.git
 cd LightRAG
 
-# ⚠️ 先にフロントエンドをビルドする必要があります
+# ⚠️ MUST build frontend FIRST
 cd lightrag_webui
 bun install --frozen-lockfile
 bun run build
 cd ..
 
-# インストール
+# Now install
 pip install ".[api]"
 ```
 
-**動作内容:**
-- フロントエンドファイルが site-packages に**コピー**されます
-- ビルド後の変更はインストール済みパッケージに影響しません
-- 更新するには再ビルドと再インストールが必要です
+**What happens:**
+- Frontend files are **copied** to site-packages
+- Post-build modifications won't affect installed package
+- Requires rebuild + reinstall to update
 
-**使用場面:**
-- 完全なインストールプロセスのテスト
-- パッケージ設定の検証
-- PyPI ユーザー体験のシミュレーション
+**When to use:**
+- Testing complete installation process
+- Verifying package configuration
+- Simulating PyPI user experience
 
 ---
 
-### 4. 配布パッケージの作成 🚀
+### 4. Creating Distribution Package 🚀
 
-**コマンド:**
+**Command:**
 ```bash
-# まずフロントエンドをビルド
+# Build frontend first
 cd lightrag_webui
 bun install --frozen-lockfile --production
 bun run build
 cd ..
 
-# 配布パッケージを作成
+# Create distribution packages
 python -m build
 
-# 出力: dist/lightrag_hku-*.whl および dist/lightrag_hku-*.tar.gz
+# Output: dist/lightrag_hku-*.whl and dist/lightrag_hku-*.tar.gz
 ```
 
-**動作内容:**
-- `setup.py` がフロントエンドのビルド済みかどうかをチェック
-- 未ビルドの場合、分かりやすいエラーメッセージとともにインストールが失敗
-- 生成されたパッケージにはすべてのフロントエンドファイルが含まれます
+**What happens:**
+- `setup.py` checks if frontend is built
+- If missing, installation fails with helpful error message
+- Generated package includes all frontend files
 
 ---
 
-## GitHub Actions（自動リリース）
+## GitHub Actions (Automated Release)
 
-GitHub でリリースを作成すると:
+When creating a release on GitHub:
 
-1. Bun を使用して**フロントエンドを自動ビルド**
-2. ビルドの成功を**検証**
-3. フロントエンドを含む **Python パッケージを作成**
-4. 既存のトラステッドパブリッシャー設定を使用して **PyPI に公開**
+1. **Automatically builds frontend** using Bun
+2. **Verifies** build completed successfully
+3. **Creates Python package** with frontend included
+4. **Publishes to PyPI** using existing trusted publisher setup
 
-**手動操作は不要です！**
+**No manual intervention required!**
 
 ---
 
-## クイックリファレンス
+## Quick Reference
 
-| シナリオ | コマンド | フロントエンドの要否 | 後からビルド可能か |
+| Scenario | Command | Frontend Required | Can Build After |
 |----------|---------|-------------------|-----------------|
-| PyPI から | `pip install lightrag-hku[api]` | 含まれています | いいえ（インストール済み） |
-| 開発 | `pip install -e ".[api]"` | 不要 | ✅ はい（いつでも） |
-| 通常インストール | `pip install ".[api]"` | ✅ 必要（事前に） | いいえ（再インストールが必要） |
-| パッケージ作成 | `python -m build` | ✅ 必要（事前に） | N/A |
+| From PyPI | `pip install lightrag-hku[api]` | Included | No (already installed) |
+| Development | `pip install -e ".[api]"` | No | ✅ Yes (anytime) |
+| Normal Install | `pip install ".[api]"` | ✅ Yes (before) | No (must reinstall) |
+| Create Package | `python -m build` | ✅ Yes (before) | N/A |
 
 ---
 
-## Bun のインストール
+## Bun Installation
 
-Bun がインストールされていない場合:
+If you don't have Bun installed:
 
 ```bash
 # macOS/Linux
@@ -145,72 +145,72 @@ curl -fsSL https://bun.sh/install | bash
 powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 
-公式ドキュメント: https://bun.sh
+Official documentation: https://bun.sh
 
 ---
 
-## ファイル構成
+## File Structure
 
 ```
 LightRAG/
-├── lightrag_webui/          # フロントエンドソースコード
-│   ├── src/                 # React コンポーネント
-│   ├── package.json         # 依存関係
-│   └── vite.config.ts       # ビルド設定
-│       └── outDir: ../lightrag/api/webui  # ビルド出力先
+├── lightrag_webui/          # Frontend source code
+│   ├── src/                 # React components
+│   ├── package.json         # Dependencies
+│   └── vite.config.ts       # Build configuration
+│       └── outDir: ../lightrag/api/webui  # Build output
 │
 ├── lightrag/
 │   └── api/
-│       └── webui/           # フロントエンドビルド出力（gitignore 対象）
-│           ├── index.html   # ビルド済みファイル（bun run build 実行後）
-│           └── assets/      # ビルド済みアセット
+│       └── webui/           # Frontend build output (gitignored)
+│           ├── index.html   # Built files (after running bun run build)
+│           └── assets/      # Built assets
 │
-├── setup.py                 # ビルドチェック
-├── pyproject.toml           # パッケージ設定
-└── .gitignore               # lightrag/api/webui/* を除外（.gitkeep を除く）
+├── setup.py                 # Build checks
+├── pyproject.toml           # Package configuration
+└── .gitignore               # Excludes lightrag/api/webui/* (except .gitkeep)
 ```
 
 ---
 
-## トラブルシューティング
+## Troubleshooting
 
-### Q: 開発モードでインストールしましたが、Web インターフェースが動作しません
+### Q: I installed in development mode but the web interface doesn't work
 
-**A:** フロントエンドをビルドしてください:
+**A:** Build the frontend:
 ```bash
 cd lightrag_webui && bun run build
 ```
 
-### Q: フロントエンドをビルドしましたが、インストール済みパッケージに反映されていません
+### Q: I built the frontend but it's not in my installed package
 
-**A:** おそらくビルド後に `pip install .` を使用したためです。以下のいずれかを試してください:
-- 開発用に `pip install -e ".[api]"` を使用する
-- または再インストール: `pip uninstall lightrag-hku && pip install ".[api]"`
+**A:** You probably used `pip install .` after building. Either:
+- Use `pip install -e ".[api]"` for development
+- Or reinstall: `pip uninstall lightrag-hku && pip install ".[api]"`
 
-### Q: ビルド済みフロントエンドファイルはどこにありますか？
+### Q: Where are the built frontend files?
 
-**A:** `bun run build` 実行後、`lightrag/api/webui/` にあります
+**A:** In `lightrag/api/webui/` after running `bun run build`
 
-### Q: Bun の代わりに npm や yarn を使用できますか？
+### Q: Can I use npm or yarn instead of Bun?
 
-**A:** はい。ビルドスクリプト（`dev`、`build`、`preview`、`lint`）はランタイムに依存せず、Bun と Node.js/npm の両方で動作します:
+**A:** Yes. The build scripts (`dev`, `build`, `preview`, `lint`) are runtime-agnostic and work with both Bun and Node.js/npm:
 ```bash
 npm install
 npm run build
 ```
-速度の面で Bun を推奨しますが、npm も完全にサポートされています。テスト（`bun test`）には引き続き Bun が必要です。
+Bun is recommended for speed, but npm is fully supported. Tests (`bun test`) still require Bun.
 
-### Q: `Cannot find package '@/lib'` でビルドが失敗します
+### Q: Build fails with `Cannot find package '@/lib'`
 
-**A:** これは `vite.config.ts` が TypeScript パスエイリアス（`@/`）を使用しており、設定読み込み時に Bun のみが解決できたことが原因でした。相対インポートで修正された最新バージョンに更新してください。
+**A:** This was caused by `vite.config.ts` using a TypeScript path alias (`@/`) that only Bun could resolve at config load time. Update to the latest version where this is fixed with a relative import.
 
 ---
 
-## まとめ
+## Summary
 
-✅ **PyPI ユーザー**: 操作不要、フロントエンドは含まれています
-✅ **開発者**: `pip install -e ".[api]"` を使用し、必要に応じてフロントエンドをビルド
-✅ **CI/CD**: GitHub Actions で自動ビルド
-✅ **Git**: フロントエンドビルド出力はコミットされません
+✅ **PyPI users**: No action needed, frontend included
+✅ **Developers**: Use `pip install -e ".[api]"`, build frontend when needed
+✅ **CI/CD**: Automatic build in GitHub Actions
+✅ **Git**: Frontend build output never committed
 
-質問や問題がある場合は、GitHub issue を作成してください。
+For questions or issues, please open a GitHub issue.
