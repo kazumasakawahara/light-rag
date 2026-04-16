@@ -18,6 +18,8 @@
 10. [LightRAG を停止・再起動する](#10-lightrag-を停止再起動する)
 11. [困ったときは](#11-困ったときは)
 12. [用語集](#12-用語集)
+- [付録 A: よく使うコマンド一覧](#付録-a-よく使うコマンド一覧)
+- [付録 B: `process_document.py`（上級者向けコマンドラインツール）のセットアップ](#付録-b-process_documentpy上級者向けコマンドラインツールのセットアップ)
 
 ---
 
@@ -408,7 +410,7 @@ AUTH_ACCOUNTS=admin:好きなパスワード
 
 ---
 
-## 付録: よく使うコマンド一覧
+## 付録 A: よく使うコマンド一覧
 
 ターミナルで使う基本コマンドの早見表です。
 
@@ -420,6 +422,103 @@ AUTH_ACCOUNTS=admin:好きなパスワード
 | 状態を確認 | `docker compose ps` |
 | ログを見る | `docker compose logs --tail 100` |
 | 完全に停止 | `docker compose down` |
+
+---
+
+## 付録 B: `process_document.py`（上級者向けコマンドラインツール）のセットアップ
+
+`process_document.py` は、PDF 内の画像・表・数式を含む複雑な文書をマルチモーダル解析してから LightRAG に取り込むためのコマンドラインツールです。**WebUI では不要**で、バッチ処理や自動化パイプラインを構築したい上級者向けの機能です。
+
+> ⚠️ **注意**: このセクションは Python 環境の操作に慣れている方を対象としています。WebUI で文書登録する通常の使い方（[7. ドキュメントを登録する](#7-ドキュメントを登録する)）だけで用が足りる場合は、このセットアップは不要です。
+
+### B.1 必要な依存関係
+
+| 依存 | 役割 | 備考 |
+|---|---|---|
+| `raganything>=1.2.0` | マルチモーダル処理エンジン本体 | `--no-deps` で入れる必要あり（下記参照） |
+| パーサーのいずれか | 文書の構造解析 | `mineru` / `docling` / `paddleocr` から選択 |
+
+### B.2 `raganything` のインストール
+
+`raganything` は通常の `uv sync` では入りません。内部依存の `mineru[core]` が他パッケージと競合するため、**`--no-deps` フラグ付きの手動インストール**が必要です（`pyproject.toml` のコメントにも明記されています）。
+
+```bash
+# LightRAG のルートディレクトリで仮想環境を有効化
+source .venv/bin/activate     # macOS / Linux
+# .venv\Scripts\activate       # Windows
+
+# raganything を依存解決なしでインストール
+uv pip install --no-deps 'raganything>=1.2.0'
+```
+
+> 💡 `--no-deps` を付け忘れると依存解決に失敗して `uv` がエラーを返します。必ず付けてください。
+
+### B.3 パーサーのインストール（いずれか 1 つ）
+
+`process_document.py` は `--parser` オプション（既定値は `mineru`）でパーサーを選択します。選んだパーサーに応じて追加インストールが必要です。
+
+#### B.3.1 MinerU（既定・推奨）
+
+```bash
+uv pip install 'mineru[core]'
+```
+
+> 💡 初回実行時に ~2GB のモデルをダウンロードします。ディスク容量に注意してください。
+
+#### B.3.2 Docling
+
+```bash
+uv sync --extra docling
+```
+
+> ⚠️ **macOS では使えません**。`docling` は PyTorch 経由で Objective-C のフレームワークを利用しますが、macOS ではフォークセーフではないため、gunicorn のマルチワーカーと互換性がありません（`pyproject.toml` で `sys_platform != 'darwin'` 条件付きになっています）。macOS では MinerU か PaddleOCR を使ってください。
+
+#### B.3.3 PaddleOCR
+
+```bash
+uv pip install paddleocr
+```
+
+> 💡 GPU 版を使う場合は [PaddleOCR 公式ドキュメント](https://github.com/PaddlePaddle/PaddleOCR) の手順に従ってください。
+
+### B.4 インストールの確認
+
+次のコマンドで import エラーが出なければ成功です。
+
+```bash
+python -c "from raganything import RAGAnything; print('raganything OK')"
+python -c "from lightrag.japanese_chunking import japanese_chunking; print('lightrag OK')"
+```
+
+### B.5 実行例
+
+```bash
+# 環境変数で API キー等を設定（.env を読み込みます）
+python process_document.py path/to/document.pdf \
+    --working_dir ./data/rag_storage \
+    --output ./output \
+    --parser mineru
+```
+
+主なオプション:
+
+| オプション | 既定値 | 説明 |
+|---|---|---|
+| `file_path` | （必須） | 処理対象の文書パス |
+| `--working_dir` / `-w` | `./data/rag_storage` | LightRAG のデータ保存先 |
+| `--output` / `-o` | `./output` | パーサーの中間出力先 |
+| `--api-key` | `LLM_BINDING_API_KEY` 環境変数 | OpenAI API キー |
+| `--base-url` | `LLM_BINDING_HOST` 環境変数 | カスタム API エンドポイント |
+| `--parser` | `PARSER` 環境変数 or `mineru` | 使用するパーサー |
+
+### B.6 トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `ModuleNotFoundError: No module named 'raganything'` | B.2 未実施 | `uv pip install --no-deps 'raganything>=1.2.0'` |
+| `ModuleNotFoundError: No module named 'mineru'` | パーサー未インストール | B.3.1 を実施、または `--parser` で別パーサー指定 |
+| macOS で docling インポート失敗 | プラットフォーム非対応 | MinerU か PaddleOCR を使用 |
+| `raganything` の依存競合エラー | `--no-deps` 忘れ | `--no-deps` を付けて再インストール |
 
 ---
 
