@@ -20,6 +20,7 @@
 12. [用語集](#12-用語集)
 - [付録 A: よく使うコマンド一覧](#付録-a-よく使うコマンド一覧)
 - [付録 B: `process_document.py`（上級者向けコマンドラインツール）のセットアップ](#付録-b-process_documentpy上級者向けコマンドラインツールのセットアップ)
+- [付録 C: MCP サーバーで Claude Desktop から LightRAG を使う](#付録-c-mcp-サーバーで-claude-desktop-から-lightrag-を使う)
 
 ---
 
@@ -519,6 +520,105 @@ python process_document.py path/to/document.pdf \
 | `ModuleNotFoundError: No module named 'mineru'` | パーサー未インストール | B.3.1 を実施、または `--parser` で別パーサー指定 |
 | macOS で docling インポート失敗 | プラットフォーム非対応 | MinerU か PaddleOCR を使用 |
 | `raganything` の依存競合エラー | `--no-deps` 忘れ | `--no-deps` を付けて再インストール |
+
+---
+
+## 付録 C: MCP サーバーで Claude Desktop から LightRAG を使う
+
+`lightrag_mcp_server.py` は、**Claude Desktop（および MCP 対応クライアント）から LightRAG の知識グラフに質問・登録できる**ようにする橋渡しスクリプトです。
+
+### C.1 何ができるか
+
+Claude Desktop のチャット画面で、次の 3 つのツールを LightRAG に対して実行できます。
+
+| ツール | 動作 |
+|---|---|
+| `lightrag_query` | 知識グラフに質問して回答を取得（5 つの検索モード対応） |
+| `lightrag_insert` | テキストを知識グラフに登録 |
+| `lightrag_health` | LightRAG サーバーの稼働状況・パイプライン進捗を確認 |
+
+### C.2 前提条件
+
+- **LightRAG サーバーが起動している**こと（[5. LightRAG を起動する](#5-lightrag-を起動する) 参照）
+- **Claude Desktop** がインストールされていること
+- Python の仮想環境が LightRAG リポジトリで有効化できること
+
+### C.3 セットアップ
+
+#### C.3.1 MCP パッケージをインストール
+
+```bash
+# リポジトリルートで
+uv sync --extra mcp
+```
+
+#### C.3.2 Claude Desktop の設定ファイルを編集
+
+設定ファイルの場所:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+次の内容を追加します（既存の `mcpServers` があれば `lightrag` エントリを追記）:
+
+```json
+{
+  "mcpServers": {
+    "lightrag": {
+      "command": "/Users/your-name/Dev-Work/LightRAG/.venv/bin/python",
+      "args": ["/Users/your-name/Dev-Work/LightRAG/lightrag_mcp_server.py"],
+      "env": {
+        "LIGHTRAG_URL": "http://localhost:9621"
+      }
+    }
+  }
+}
+```
+
+> ⚠️ `command` と `args` のパスは**絶対パス**で、**ご自身の環境に合わせて書き換え**てください。
+
+#### C.3.3 認証を有効化している場合
+
+`.env` に `LIGHTRAG_API_KEY` を設定している場合は、`env` セクションに同じキーを指定します。
+
+```json
+"env": {
+  "LIGHTRAG_URL": "http://localhost:9621",
+  "LIGHTRAG_API_KEY": "your-configured-api-key"
+}
+```
+
+#### C.3.4 Claude Desktop を再起動
+
+設定ファイルを保存したら Claude Desktop を完全に終了し、再度起動します。チャット入力欄の近くに LightRAG ツールが表示されれば成功です。
+
+### C.4 使用例
+
+Claude Desktop のチャットで次のように依頼できます:
+
+- 「LightRAG の knowledge graph に 2024 年の売上データをまとめて聞いて」
+  → `lightrag_query` が呼ばれて結果が返る
+- 「このメモを LightRAG に登録しておいて: ...」
+  → `lightrag_insert` が呼ばれて知識グラフに追加
+- 「LightRAG は今どんな状態？」
+  → `lightrag_health` が呼ばれて稼働状況・処理中のチャンク数が返る
+
+### C.5 環境変数
+
+| 変数 | 既定値 | 説明 |
+|---|---|---|
+| `LIGHTRAG_URL` | `http://localhost:9621` | LightRAG API サーバーのベース URL |
+| `LIGHTRAG_API_KEY` | （未設定） | LightRAG 側で API キー認証を有効化している場合に指定 |
+| `LIGHTRAG_MCP_TIMEOUT` | `180` | API 呼び出しのタイムアウト（秒） |
+
+### C.6 トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| Claude Desktop にツールが表示されない | 設定ファイルの JSON 構文エラー | JSON を検証ツールで確認 |
+| `Connection error: ... is not reachable` | LightRAG サーバー未起動 | `docker compose up -d` で起動 |
+| `Auth error (401)` / `Auth error (403)` | API キー不一致または未設定 | `.env` の `LIGHTRAG_API_KEY` と設定ファイルの env を一致させる |
+| `Timeout` エラー | 大量データ登録で処理が長時間化 | `LIGHTRAG_MCP_TIMEOUT` を増やす（例: `"300"`） |
+| `ModuleNotFoundError: No module named 'mcp'` | 依存未インストール | `uv sync --extra mcp` を実行 |
 
 ---
 
