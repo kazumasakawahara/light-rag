@@ -276,7 +276,10 @@ def main():
     parser = argparse.ArgumentParser(description="MinerU RAG Example")
     parser.add_argument("file_path", help="Path to the document to process")
     parser.add_argument(
-        "--working_dir", "-w", default="./data/rag_storage", help="Working directory path"
+        "--working_dir",
+        "-w",
+        default="./data/rag_storage",
+        help="Working directory path",
     )
     parser.add_argument(
         "--output", "-o", default="./output", help="Output directory path"
