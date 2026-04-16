@@ -158,6 +158,11 @@ raganything = [
     "raganything>=1.2.0",
 ]
 
+# MCP (Model Context Protocol) server for Claude Desktop integration
+mcp = [
+    "mcp>=1.27.0",
+]
+
 [project.scripts]
 lightrag-server = "lightrag.api.lightrag_server:main"
 lightrag-gunicorn = "lightrag.api.run_with_gunicorn:main"
